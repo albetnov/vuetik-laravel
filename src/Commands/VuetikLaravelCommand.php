@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace Vuetik\VuetikLaravel\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class VuetikLaravelCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'vuetik-laravel';
 
     public $description = 'My command';
 
