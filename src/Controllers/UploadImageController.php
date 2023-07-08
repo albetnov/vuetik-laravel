@@ -14,11 +14,12 @@ use Vuetik\VuetikLaravel\Models\VuetikImages;
 
 class UploadImageController extends Controller
 {
-    private function parseStoragePath(): string {
+    private function parseStoragePath(): string
+    {
         $path = config('vuetik-laravel.storage.path');
 
-        if(Str::charAt($path, Str::length($path)) !== "/") {
-            $path .= "/";
+        if (Str::charAt($path, Str::length($path)) !== '/') {
+            $path .= '/';
         }
 
         return $path;
@@ -27,23 +28,23 @@ class UploadImageController extends Controller
     public function __invoke(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'image' => ['required', 'image', 'max:'. config('vuetik-laravel.max_upload_size')]
+            'image' => ['required', 'image', 'max:'.config('vuetik-laravel.max_upload_size')],
         ]);
 
         $result = DB::transaction(function () use ($validated) {
             $fileName = $validated['image']->hashName();
 
             Storage::disk(config('vuetik-laravel.storage.disk'))->put(
-                $this->parseStoragePath() . $fileName,
+                $this->parseStoragePath().$fileName,
                 $validated['image']->getContent()
             );
 
             return VuetikImages::create([
-                'file_name' => $fileName
+                'file_name' => $fileName,
             ]);
         });
 
-        $imgVendorUrl = config('vuetik-laravel.image_vendor_route', "/img");
+        $imgVendorUrl = config('vuetik-laravel.image_vendor_route', '/img');
 
         if (config('vuetik-laravel.glide.enable')) {
             $urlBuilder = UrlBuilderFactory::create($imgVendorUrl, config('vuetik-laravel.glide.sign_key'));
@@ -56,9 +57,9 @@ class UploadImageController extends Controller
             'status' => Response::HTTP_OK,
             'error' => false,
             'image' => [
-                "url" => $url,
-                "id" => $result->id,
-            ]
+                'url' => $url,
+                'id' => $result->id,
+            ],
         ]);
     }
 }

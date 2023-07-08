@@ -14,6 +14,7 @@ class VuetikImages extends Model
     protected $fillable = ['file_name', 'status'];
 
     public const ACTIVE = 'A';
+
     public const PENDING = 'P';
 
     public function __construct(array $attributes = [])
