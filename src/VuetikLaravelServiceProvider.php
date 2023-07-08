@@ -4,7 +4,6 @@ namespace Vuetik\VuetikLaravel;
 
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Vuetik\VuetikLaravel\Commands\VuetikLaravelCommand;
 
 class VuetikLaravelServiceProvider extends PackageServiceProvider
 {
@@ -18,8 +17,6 @@ class VuetikLaravelServiceProvider extends PackageServiceProvider
         $package
             ->name('vuetik-laravel')
             ->hasConfigFile()
-            ->hasViews()
-            ->hasMigration('create_vuetik-laravel_table')
-            ->hasCommand(VuetikLaravelCommand::class);
+            ->hasMigration('create_vuetik_images_table');
     }
 }
