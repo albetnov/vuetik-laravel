@@ -6,24 +6,24 @@ use Tiptap\Nodes\Image;
 
 class ExtendedImage extends Image
 {
-    public static $name = "extendedImage";
+    public static $name = 'extendedImage';
 
     public function addAttributes()
     {
         return [
             ...parent::addAttributes(),
             'class' => [
-                'default' => ''
+                'default' => '',
             ],
             'data-image-id' => [
-                'default' => null
+                'default' => null,
             ],
             'width' => [
-                'default' => null
+                'default' => null,
             ],
             'height' => [
-                'default' => null
-            ]
+                'default' => null,
+            ],
         ];
     }
 }
