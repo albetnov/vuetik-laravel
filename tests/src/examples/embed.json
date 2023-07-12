@@ -1,0 +1,13 @@
+{
+    "type": "doc",
+    "content": [
+        {
+            "type": "embed",
+            "attrs": {
+                "src": "http://localhost:5173",
+                "frameborder": 0,
+                "allowfullscreen": true
+            }
+        }
+    ]
+}

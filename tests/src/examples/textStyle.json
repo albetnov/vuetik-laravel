@@ -1,0 +1,22 @@
+{
+    "type": "doc",
+    "content": [
+        {
+            "type": "paragraph",
+            "attrs": {
+                "textAlign": "left"
+            },
+            "content": [
+                {
+                    "type": "text",
+                    "marks": [
+                        {
+                            "type": "textStyle"
+                        }
+                    ],
+                    "text": "feawfawe"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,17 @@
+{
+    "type": "doc",
+    "content": [
+        {
+            "type": "extendedImage",
+            "attrs": {
+                "src": "http://localhost:3000/img/default.jpg",
+                "alt": null,
+                "title": null,
+                "class": "rounded-lg my-2 max-w-full max-h-full",
+                "width": 564,
+                "height": 564,
+                "data-image-id": "e4b9da63-cf1e-45d2-b967-2c8e44591c9e"
+            }
+        }
+    ]
+}

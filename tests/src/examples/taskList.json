@@ -1,0 +1,30 @@
+{
+    "type": "doc",
+    "content": [
+        {
+            "type": "taskList",
+            "content": [
+                {
+                    "type": "taskItem",
+                    "attrs": {
+                        "checked": true
+                    },
+                    "content": [
+                        {
+                            "type": "paragraph",
+                            "attrs": {
+                                "textAlign": "left"
+                            },
+                            "content": [
+                                {
+                                    "type": "text",
+                                    "text": "fewafaewfaew"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

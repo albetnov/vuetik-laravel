@@ -1,0 +1,14 @@
+{
+    "type": "doc",
+    "content": [
+        {
+            "type": "youtube",
+            "attrs": {
+                "src": "https://www.youtube.com/watch?v=WFmmS_tqV-w",
+                "start": 0,
+                "width": 640,
+                "height": 480
+            }
+        }
+    ]
+}
