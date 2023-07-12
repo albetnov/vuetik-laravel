@@ -19,9 +19,9 @@ use Tiptap\Nodes\TableRow;
 use Tiptap\Nodes\TaskItem;
 use Tiptap\Nodes\TaskList;
 use Vuetik\VuetikLaravel\Controllers\UploadImageController;
+use Vuetik\VuetikLaravel\Extensions\Color;
 use Vuetik\VuetikLaravel\Factories\ContentFactory;
 use Vuetik\VuetikLaravel\Factories\ImageFactory;
-use Vuetik\VuetikLaravel\Extensions\Color;
 use Vuetik\VuetikLaravel\Nodes\Embed;
 use Vuetik\VuetikLaravel\Nodes\ExtendedImage;
 use Vuetik\VuetikLaravel\Nodes\Twitter;
@@ -38,7 +38,7 @@ class VuetikLaravel
     {
         $content = json_decode($json, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new \InvalidArgumentException("Payload JSON is not valid");
+            throw new \InvalidArgumentException('Payload JSON is not valid');
         }
 
         return self::parse($content);
@@ -52,7 +52,7 @@ class VuetikLaravel
                     'codeBlock' => false,
                 ]),
                 new CodeBlockShiki([
-                    'guessLanguage' => true
+                    'guessLanguage' => true,
                 ]),
                 new Underline(),
                 new ExtendedImage(),
@@ -61,7 +61,7 @@ class VuetikLaravel
                     'multicolor' => true,
                 ]),
                 new TextAlign([
-                    'types' => ['heading', 'paragraph']
+                    'types' => ['heading', 'paragraph'],
                 ]),
                 new TaskList(),
                 new TaskItem(),
@@ -73,8 +73,8 @@ class VuetikLaravel
                 new Color(),
                 new Youtube(),
                 new Twitter(),
-                new Embed()
-            ]
+                new Embed(),
+            ],
         ]);
 
         $image = [
@@ -83,13 +83,13 @@ class VuetikLaravel
         ];
 
         $editor->setContent($content)->descendants(function (&$node) use (&$image) {
-            if ($node->type === "extendedImage") {
+            if ($node->type === 'extendedImage') {
                 $attrs = $node->attrs;
 
                 $ids = [];
                 $binaries = [];
 
-                if(Str::startsWith($attrs->src, "data:image/png;base64,")) {
+                if (Str::startsWith($attrs->src, 'data:image/png;base64,')) {
                     $binaries['file'] = $attrs->src;
                 }
 
@@ -98,23 +98,23 @@ class VuetikLaravel
                     unset($attrs->{'data-image-id'});
                 }
 
-                if($attrs->width) {
+                if ($attrs->width) {
                     isset($ids['id']) && $ids['width'] = $attrs->width;
                     isset($binaries['file']) && $binaries['width'] = $attrs->width;
                     unset($attrs->width);
                 }
 
-                if($attrs->height) {
+                if ($attrs->height) {
                     isset($ids['id']) && $ids['height'] = $attrs->height;
                     isset($binaries['file']) && $binaries['height'] = $attrs->height;
                     unset($attrs->height);
                 }
 
-                if(!empty($ids)) {
+                if (! empty($ids)) {
                     $image['ids'][] = $ids;
                 }
 
-                if(!empty($binaries)) {
+                if (! empty($binaries)) {
                     $image['binaries'][] = $binaries;
                 }
             }

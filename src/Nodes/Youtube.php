@@ -3,12 +3,11 @@
 namespace Vuetik\VuetikLaravel\Nodes;
 
 use Tiptap\Core\Node;
-use Tiptap\Utils\HTML;
 use Vuetik\VuetikLaravel\Utils;
 
 class Youtube extends Node
 {
-    public static $name = "youtube";
+    public static $name = 'youtube';
 
     public function addAttributes(): array
     {
@@ -17,14 +16,14 @@ class Youtube extends Node
                 'default' => null,
             ],
             'start' => [
-                'default' => 0
+                'default' => 0,
             ],
             'width' => [
                 'default' => 640,
             ],
             'height' => [
-                'default' => 480
-            ]
+                'default' => 480,
+            ],
         ];
     }
 
@@ -32,8 +31,8 @@ class Youtube extends Node
     {
         return [
             [
-                'tag' => 'div[data-youtube-video] iframe'
-            ]
+                'tag' => 'div[data-youtube-video] iframe',
+            ],
         ];
     }
 

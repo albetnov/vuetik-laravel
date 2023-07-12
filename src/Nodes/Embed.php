@@ -7,29 +7,29 @@ use Vuetik\VuetikLaravel\Utils;
 
 class Embed extends Node
 {
-    public static $name = "embed";
+    public static $name = 'embed';
 
     public function parseHTML()
     {
         return [
             [
-                'tag' => 'iframe'
-            ]
+                'tag' => 'iframe',
+            ],
         ];
     }
 
     public function addAttributes(): array
     {
         return [
-            'src'=> [
-                'default' => null
+            'src' => [
+                'default' => null,
             ],
             'frameborder' => [
-                'default' => 0
+                'default' => 0,
             ],
             'allowfullscreen' => [
-                'default' => null
-            ]
+                'default' => null,
+            ],
         ];
     }
 

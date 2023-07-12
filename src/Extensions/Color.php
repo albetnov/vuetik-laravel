@@ -18,19 +18,19 @@ class Color extends Extension
                 'attributes' => [
                     'color' => [
                         'default' => null,
-                        'parseHTML' => fn(DOMNode $DOMNode) => InlineStyle::getAttribute($DOMNode, "color") ?? "",
-                        'renderHTML' => function($attributes) {
-                            if(!property_exists($attributes, "color") || !$attributes->color) {
+                        'parseHTML' => fn (DOMNode $DOMNode) => InlineStyle::getAttribute($DOMNode, 'color') ?? '',
+                        'renderHTML' => function ($attributes) {
+                            if (! property_exists($attributes, 'color') || ! $attributes->color) {
                                 return null;
                             }
 
                             return [
-                                'style' => "color: {$attributes->color}"
+                                'style' => "color: {$attributes->color}",
                             ];
-                        }
-                    ]
-                ]
-            ]
+                        },
+                    ],
+                ],
+            ],
         ];
     }
 }
