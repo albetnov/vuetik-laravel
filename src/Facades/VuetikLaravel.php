@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Facade;
 
 /**
  * @see \Vuetik\VuetikLaravel\VuetikLaravel
+ *
  * @method static void routes()
  */
 class VuetikLaravel extends Facade
