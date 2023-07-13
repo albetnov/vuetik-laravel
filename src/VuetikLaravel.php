@@ -40,7 +40,6 @@ class VuetikLaravel
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new \InvalidArgumentException('Payload JSON is not valid');
         }
-
         return self::parse($content);
     }
 

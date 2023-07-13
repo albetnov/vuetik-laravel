@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Vuetik\VuetikLaravel\Factories\BinaryImageFactory;
 use Vuetik\VuetikLaravel\Factories\IdImageFactory;
 use Vuetik\VuetikLaravel\VuetikLaravel;
 
@@ -9,7 +10,7 @@ beforeEach(function () {
 });
 
 it('Registered route successfully', function () {
-    VuetikLaravel::routes();
+    \Vuetik\VuetikLaravel\Facades\VuetikLaravel::routes();
     expect(Route::getRoutes()->getRoutesByMethod(['POST'])['POST']['upload-img'])
         ->toBeInstanceOf(\Illuminate\Routing\Route::class);
 });
@@ -23,6 +24,10 @@ it('Rendered underlined content', function () {
     expect($content->html)->toEqual($html);
 });
 
+it("failed parsing json and throw exception", function () {
+    expect(VuetikLaravel::parseJson("not valid"))->toThrow(\InvalidArgumentException::class);
+})->throws(\InvalidArgumentException::class);
+
 it('Rendered extended image content', function () {
     $payload = file_get_contents(__DIR__.'/examples/image.json');
     $content = VuetikLaravel::parseJson($payload);
@@ -30,6 +35,16 @@ it('Rendered extended image content', function () {
     expect($content->html)->toContain('img', 'src')
         ->and($content->image->ids)->toBeArray()
         ->and($content->image->ids[0])->toBeInstanceOf(IdImageFactory::class);
+});
+
+it("Rendered extended image content (base64)", function () {
+    $payload = file_get_contents(__DIR__. "/examples/image_base64.json");
+    $content = VuetikLaravel::parseJson($payload);
+
+    expect($content->html)->toContain('img', 'src')
+        ->and($content->image->binaries)->toBeArray()
+        ->and($content->image->binaries[0])->toBeInstanceOf(BinaryImageFactory::class)
+        ->and($content->image->binaries[0]->content)->toBeString();
 });
 
 it('Rendered Text Style content', function () {

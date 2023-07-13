@@ -2,10 +2,10 @@
 
 namespace Vuetik\VuetikLaravel\Factories;
 
-class BinaryImageFactory
+class BinaryImageFactory extends ImageTypeFactory
 {
-    public function __construct(readonly string $uniqidName, readonly string $content, readonly int $width, readonly int $height)
+    public function __construct(readonly string $uniqidName, readonly string $content, ?int $width, ?int $height)
     {
-
+        parent::__construct($width, $height);
     }
 }

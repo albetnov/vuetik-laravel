@@ -2,10 +2,10 @@
 
 namespace Vuetik\VuetikLaravel\Factories;
 
-class IdImageFactory
+class IdImageFactory extends ImageTypeFactory
 {
-    public function __construct(readonly string $id, readonly int $width, readonly int $height)
+    public function __construct(readonly string $id, ?int $width,  ?int $height)
     {
-
+        parent::__construct($width, $height);
     }
 }

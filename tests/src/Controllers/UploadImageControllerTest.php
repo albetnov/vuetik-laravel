@@ -45,15 +45,16 @@ it('failed uploading image (validation: required, string, image, 2mb)', function
 });
 
 it('uploaded image successfully (without glide)', function () {
+    config()->set('vuetik-laravel.glide.enable', false);
     Storage::fake('fake');
 
     $file = UploadedFile::fake()->image('fake.jpg');
     $result = $this->post(route('upload-img'), [
         'image' => $file,
-    ])->assertJson(fn (AssertableJson $json) => $json
+    ])->assertJson(fn(AssertableJson $json) => $json
         ->where('status', Response::HTTP_OK)
         ->where('error', false)
-        ->has('image', fn (AssertableJson $json) => $json->hasAll(['url', 'id'])
+        ->has('image', fn(AssertableJson $json) => $json->hasAll(['url', 'id'])
             ->etc())
         ->etc())
         ->json();
@@ -63,7 +64,7 @@ it('uploaded image successfully (without glide)', function () {
     expect($image)->not->toBeNull()
         ->and($image->id)->toEqual($result['image']['id']);
 
-    Storage::disk('fake')->assertExists('images/'.$file->hashName());
+    Storage::disk('fake')->assertExists('images/' . $file->hashName());
 });
 
 it('uploaded image successfully (with glide)', function () {
@@ -81,10 +82,10 @@ it('uploaded image successfully (with glide)', function () {
 
     $result = $this->post(route('upload-img'), [
         'image' => $file,
-    ])->assertJson(fn (AssertableJson $json) => $json
+    ])->assertJson(fn(AssertableJson $json) => $json
         ->where('status', Response::HTTP_OK)
         ->where('error', false)
-        ->has('image', fn (AssertableJson $json) => $json->hasAll(['url', 'id'])
+        ->has('image', fn(AssertableJson $json) => $json->hasAll(['url', 'id'])
             ->etc())
         ->etc())
         ->json();

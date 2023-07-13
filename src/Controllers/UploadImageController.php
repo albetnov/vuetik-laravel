@@ -7,23 +7,14 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
-use League\Glide\Urls\UrlBuilderFactory;
 use Symfony\Component\HttpFoundation\Response;
+use Vuetik\VuetikLaravel\ImageManager;
 use Vuetik\VuetikLaravel\Models\VuetikImages;
+use Vuetik\VuetikLaravel\Utils;
 
 class UploadImageController extends Controller
 {
-    private function parseStoragePath(): string
-    {
-        $path = config('vuetik-laravel.storage.path');
 
-        if (Str::charAt($path, Str::length($path)) !== '/') {
-            $path .= '/';
-        }
-
-        return $path;
-    }
 
     public function __invoke(Request $request): JsonResponse
     {
@@ -35,7 +26,7 @@ class UploadImageController extends Controller
             $fileName = $validated['image']->hashName();
 
             Storage::disk(config('vuetik-laravel.storage.disk'))->put(
-                $this->parseStoragePath().$fileName,
+                Utils::parseStoragePath().$fileName,
                 $validated['image']->getContent()
             );
 
@@ -47,8 +38,10 @@ class UploadImageController extends Controller
         $imgVendorUrl = config('vuetik-laravel.image_vendor_route', '/img');
 
         if (config('vuetik-laravel.glide.enable')) {
-            $urlBuilder = UrlBuilderFactory::create($imgVendorUrl, config('vuetik-laravel.glide.sign_key'));
-            $url = $urlBuilder->getUrl($result->file_name, config('vuetik-laravel.glide.img_modifiers'));
+            $url = ImageManager::getGlideUrl(
+                image: $result,
+                additionalProps: config('vuetik-laravel.glide.img_modifiers')
+            );
         } else {
             $url = url($imgVendorUrl, $result->file_name);
         }
