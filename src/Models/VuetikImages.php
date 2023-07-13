@@ -19,7 +19,7 @@ class VuetikImages extends Model
     public const PENDING = 'P';
 
     protected $casts = [
-        'props' => 'json'
+        'props' => 'json',
     ];
 
     public function __construct(array $attributes = [])

@@ -13,7 +13,7 @@ class VuetikImagesFactory extends Factory
     {
         return [
             'file_name' => fake()->word(),
-            'status' => VuetikImages::PENDING
+            'status' => VuetikImages::PENDING,
         ];
     }
 }
