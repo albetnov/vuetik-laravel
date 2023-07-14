@@ -2,8 +2,8 @@
 
 use Illuminate\Support\Facades\Blade;
 
-it("can generate twitter script", function () {
-    $bladeView = "@twitterScript";
+it('can generate twitter script', function () {
+    $bladeView = '@twitterScript';
     $compiledView = Blade::compileString($bladeView);
 
     expect($compiledView)
