@@ -11,9 +11,11 @@ class Utils
         return collect($attributes)->map(fn ($item) => (string) $item)->toArray();
     }
 
-    public static function parseStoragePath(?string $path = null): string
+    public static function parseStoragePath(string $path = null): string
     {
-        if(!$path) $path = config('vuetik-laravel.storage.path');
+        if (! $path) {
+            $path = config('vuetik-laravel.storage.path');
+        }
 
         if (Str::charAt($path, Str::length($path) - 1) !== '/') {
             $path .= '/';
