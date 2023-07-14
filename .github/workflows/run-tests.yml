@@ -27,6 +27,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -48,4 +53,6 @@ jobs:
         run: composer show -D
 
       - name: Execute tests
-        run: vendor/bin/pest --ci
+        run: |
+          npm i
+          vendor/bin/pest --ci

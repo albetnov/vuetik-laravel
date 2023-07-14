@@ -13,4 +13,5 @@ return [
         'sign_key' => env('APP_KEY'),
         'img_modifiers' => [],
     ],
+    'purge_after' => '-2 days'
 ];
