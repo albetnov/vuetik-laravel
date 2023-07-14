@@ -2,6 +2,7 @@
 
 namespace Vuetik\VuetikLaravel;
 
+use Illuminate\Support\Facades\Blade;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Vuetik\VuetikLaravel\Commands\PurgeUnusedImages;
@@ -20,5 +21,14 @@ class VuetikLaravelServiceProvider extends PackageServiceProvider
             ->hasConfigFile()
             ->hasMigration('create_vuetik_images_table')
             ->hasCommand(PurgeUnusedImages::class);
+    }
+
+    public function boot()
+    {
+        parent::boot();
+
+        Blade::directive('twitterScript', function () {
+            return '<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>';
+        });
     }
 }
