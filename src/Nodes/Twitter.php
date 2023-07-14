@@ -14,7 +14,7 @@ class Twitter extends Node
     public function addOptions(): array
     {
         return [
-            'throwOnFail' => false
+            'throwOnFail' => false,
         ];
     }
 
@@ -55,13 +55,13 @@ class Twitter extends Node
 
         $result = $response->json();
 
-        if($response->status() !== 200) {
-            if($this->options['throwOnFail']) {
-                throw new TwitterParseException($url, "Failed to parsing twitter content");
+        if ($response->status() !== 200) {
+            if ($this->options['throwOnFail']) {
+                throw new TwitterParseException($url, 'Failed to parsing twitter content');
             }
 
             return [
-                'content' => '<p>Failed Fetching Twitter</p>'
+                'content' => '<p>Failed Fetching Twitter</p>',
             ];
         }
 

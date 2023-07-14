@@ -74,7 +74,7 @@ class VuetikLaravel
                 new Color(),
                 new Youtube(),
                 new Twitter([
-                    'throwOnFail' => Arr::get($options, 'twitter.throwOnFail') ?? false
+                    'throwOnFail' => Arr::get($options, 'twitter.throwOnFail') ?? false,
                 ]),
                 new Embed(),
             ],
