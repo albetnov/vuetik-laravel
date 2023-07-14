@@ -14,8 +14,6 @@ use Vuetik\VuetikLaravel\Utils;
 
 class UploadImageController extends Controller
 {
-
-
     public function __invoke(Request $request): JsonResponse
     {
         $validated = $request->validate([

@@ -24,8 +24,8 @@ it('Rendered underlined content', function () {
     expect($content->html)->toEqual($html);
 });
 
-it("failed parsing json and throw exception", function () {
-    expect(VuetikLaravel::parseJson("not valid"))->toThrow(\InvalidArgumentException::class);
+it('failed parsing json and throw exception', function () {
+    expect(VuetikLaravel::parseJson('not valid'))->toThrow(\InvalidArgumentException::class);
 })->throws(\InvalidArgumentException::class);
 
 it('Rendered extended image content', function () {
@@ -37,8 +37,8 @@ it('Rendered extended image content', function () {
         ->and($content->image->ids[0])->toBeInstanceOf(IdImageFactory::class);
 });
 
-it("Rendered extended image content (base64)", function () {
-    $payload = file_get_contents(__DIR__. "/examples/image_base64.json");
+it('Rendered extended image content (base64)', function () {
+    $payload = file_get_contents(__DIR__.'/examples/image_base64.json');
     $content = VuetikLaravel::parseJson($payload);
 
     expect($content->html)->toContain('img', 'src')

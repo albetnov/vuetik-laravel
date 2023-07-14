@@ -9,7 +9,7 @@ use Vuetik\VuetikLaravel\VuetikLaravel;
 
 uses(RefreshDatabase::class);
 
-it("store preupload from give array of id", function () {
+it('store preupload from give array of id', function () {
     $results = VuetikImages::factory(10)->create();
 
     $ids = collect($results)->pluck('id')->merge(['invalid-id', 'fake-id'])->toArray();
@@ -18,13 +18,13 @@ it("store preupload from give array of id", function () {
 
     $results = $results->fresh();
 
-    foreach($results as $result) {
+    foreach ($results as $result) {
         expect($result->status)->toBe(VuetikImages::ACTIVE);
     }
 });
 
-it("store all binaries photos", function () {
-    $payload = file_get_contents(__DIR__."/examples/image_base64.json");
+it('store all binaries photos', function () {
+    $payload = file_get_contents(__DIR__.'/examples/image_base64.json');
 
     $content = VuetikLaravel::parseJson($payload);
 
@@ -39,11 +39,11 @@ it("store all binaries photos", function () {
     $db = VuetikImages::first();
 
     expect($db->file_name)->toEqual($content->image->binaries[0]->uniqidName)
-    ->and($db->status)->toBe(VuetikImages::ACTIVE);
+        ->and($db->status)->toBe(VuetikImages::ACTIVE);
 });
 
-it("store all binaries photos from config disk", function () {
-    $payload = file_get_contents(__DIR__."/examples/image_base64.json");
+it('store all binaries photos from config disk', function () {
+    $payload = file_get_contents(__DIR__.'/examples/image_base64.json');
 
     $content = VuetikLaravel::parseJson($payload);
 
@@ -53,18 +53,18 @@ it("store all binaries photos from config disk", function () {
 
     ImageManager::store($content);
 
-    Storage::disk('images')->assertExists(Utils::parseStoragePath() . $content->image->binaries[0]->uniqidName);
+    Storage::disk('images')->assertExists(Utils::parseStoragePath().$content->image->binaries[0]->uniqidName);
 });
 
-it("store all pre-upload photo", function () {
-    $payload = file_get_contents(__DIR__."/examples/image.json");
+it('store all pre-upload photo', function () {
+    $payload = file_get_contents(__DIR__.'/examples/image.json');
 
     VuetikImages::insert([
         'id' => 'e4b9da63-cf1e-45d2-b967-2c8e44591c9e',
         'file_name' => 'example.png',
         'created_at' => now(),
         'updated_at' => now(),
-        'status' => VuetikImages::PENDING
+        'status' => VuetikImages::PENDING,
     ]);
 
     $content = VuetikLaravel::parseJson($payload);
@@ -77,33 +77,33 @@ it("store all pre-upload photo", function () {
         ->and($img->status)->toBe(VuetikImages::ACTIVE);
 });
 
-it("Can generate glide url (with props)", function () {
+it('Can generate glide url (with props)', function () {
     $img = VuetikImages::create([
         'file_name' => 'example.png',
         'status' => VuetikImages::ACTIVE,
         'props' => [
             'width' => 500,
-            'height' => 700
-        ]
+            'height' => 700,
+        ],
     ]);
 
     config()->set('vuetik-laravel.glide.sign_key', 'abc');
 
     $url = ImageManager::getGlideUrl(image: $img, additionalProps: [
-        'blur' => 5
+        'blur' => 5,
     ]);
 
     expect($url)->toContain($img->file_name, 'w=500', 'h=700', 's=', 'blur=5');
 });
 
-it("can generate glide url (without props)", function () {
+it('can generate glide url (without props)', function () {
     $img = VuetikImages::create([
         'file_name' => 'example.png',
-        'status' => VuetikImages::ACTIVE
+        'status' => VuetikImages::ACTIVE,
     ]);
 
     config()->set('vuetik-laravel.glide.sign_key', 'abc');
-    $url = ImageManager::getGlideUrl($img, "/custom");
+    $url = ImageManager::getGlideUrl($img, '/custom');
 
-    expect($url)->toContain("custom", $img->file_name, 's=');
+    expect($url)->toContain('custom', $img->file_name, 's=');
 });
