@@ -16,13 +16,19 @@ class PurgeUnusedImages extends Command
     public function handle(): int
     {
         $dateTime = $this->option('after');
-        if (!$dateTime) $dateTime = config('vuetik-laravel.purge_after');
+        if (! $dateTime) {
+            $dateTime = config('vuetik-laravel.purge_after');
+        }
 
         $disk = $this->option('disk');
-        if (!$disk) $disk = config('vuetik-laravel.storage.disk');
+        if (! $disk) {
+            $disk = config('vuetik-laravel.storage.disk');
+        }
 
         $storagePath = $this->option('path');
-        if (!$storagePath) $storagePath = config('vuetik-laravel.storage.path');
+        if (! $storagePath) {
+            $storagePath = config('vuetik-laravel.storage.path');
+        }
 
         $images = VuetikImages::where('status', VuetikImages::PENDING)
             ->where(
@@ -32,25 +38,26 @@ class PurgeUnusedImages extends Command
             );
 
         foreach ($images->lazy() as $image) {
-            $filePath = Utils::parseStoragePath($storagePath) . $image->file_name;
+            $filePath = Utils::parseStoragePath($storagePath).$image->file_name;
             $checkExisting = Storage::disk($disk)->exists($filePath);
 
-            if(!$checkExisting) {
-                $this->error('Failed deleting file (not exist) id: '. $image->id);
+            if (! $checkExisting) {
+                $this->error('Failed deleting file (not exist) id: '.$image->id);
+
                 continue;
             }
 
             Storage::disk($disk)->delete($filePath);
 
-            if($this->option('show-log')) {
-                $this->info('Purged: '. $image->id);
+            if ($this->option('show-log')) {
+                $this->info('Purged: '.$image->id);
             }
 
             $image->delete();
 
         }
 
-        $this->info("Unused Image Purged!");
+        $this->info('Unused Image Purged!');
 
         return self::SUCCESS;
     }
