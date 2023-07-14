@@ -1,8 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Vuetik\VuetikLaravel\Exceptions\TwitterParseException;
 use Vuetik\VuetikLaravel\Factories\BinaryImageFactory;
 use Vuetik\VuetikLaravel\Factories\IdImageFactory;
+use Vuetik\VuetikLaravel\Nodes\Twitter;
 use Vuetik\VuetikLaravel\VuetikLaravel;
 
 beforeEach(function () {
@@ -134,3 +136,23 @@ it('Rendered Twitter Embed', function () {
 
     expect($content->html)->toEqual(trim($html));
 });
+
+it("Failed rendered twitter embed due to invalid id", function () {
+    $payload = file_get_contents(__DIR__."/examples/twitter_invalid.json");
+
+    $content = VuetikLaravel::parseJson($payload);
+
+    expect($content->html)->toEqual("<p>Failed Fetching Twitter</p>");
+});
+
+it("Failed rendered twitter embed due to invalid id (with exception)", function () {
+    $payload = file_get_contents(__DIR__."/examples/twitter_invalid.json");
+
+    $content = VuetikLaravel::parseJson($payload, [
+        'twitter' => [
+            'throwOnFail' => true
+        ]
+    ]);
+
+    expect($content)->toThrow(TwitterParseException::class);
+})->throws(TwitterParseException::class);

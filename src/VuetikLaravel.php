@@ -2,6 +2,7 @@
 
 namespace Vuetik\VuetikLaravel;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Tiptap\Editor;
@@ -34,17 +35,17 @@ class VuetikLaravel
         Route::post('/upload-img', UploadImageController::class)->name('upload-img');
     }
 
-    public static function parseJson(string $json): ContentFactory
+    public static function parseJson(string $json, array $options = []): ContentFactory
     {
         $content = json_decode($json, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new \InvalidArgumentException('Payload JSON is not valid');
         }
 
-        return self::parse($content);
+        return self::parse($content, $options);
     }
 
-    public static function parse(string|array $content): ContentFactory
+    public static function parse(string|array $content, array $options = []): ContentFactory
     {
         $editor = new Editor([
             'extensions' => [
@@ -72,7 +73,9 @@ class VuetikLaravel
                 new TableHeader(),
                 new Color(),
                 new Youtube(),
-                new Twitter(),
+                new Twitter([
+                    'throwOnFail' => Arr::get($options, 'twitter.throwOnFail') ?? false
+                ]),
                 new Embed(),
             ],
         ]);
