@@ -18,8 +18,8 @@ it('Append slash on string', function () {
     config()->set('vuetik-laravel.storage.path', 'test');
 
     $path = Utils::parseStoragePath();
-    expect(Str::charAt($path, Str::length($path) - 1))->toBe('/');
+    expect(Str::charAt($path, Str::length($path) - 1))->toBe(DIRECTORY_SEPARATOR);
 
     $path = Utils::parseStoragePath('test/');
-    expect(Str::charAt($path, Str::length($path) - 1))->toBe('/');
+    expect(Str::charAt($path, Str::length($path) - 1))->toBe(DIRECTORY_SEPARATOR);
 });

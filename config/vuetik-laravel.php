@@ -4,7 +4,7 @@ return [
     'max_upload_size' => 2048,
     'storage' => [
         'disk' => 'local',
-        'path' => storage_path('public/vuetik-laravel'),
+        'path' => storage_path('images'),
     ],
     'table' => 'vuetik_images',
     'image_vendor_route' => '/img',

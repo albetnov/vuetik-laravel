@@ -50,6 +50,7 @@ it('store all binaries photos from config disk', function () {
     Storage::fake('images');
 
     config()->set('vuetik-laravel.storage.disk', 'images');
+    config()->set('vuetik-laravel.storage.path', "img");
 
     ImageManager::store($content);
 

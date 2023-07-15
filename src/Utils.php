@@ -17,8 +17,8 @@ class Utils
             $path = config('vuetik-laravel.storage.path');
         }
 
-        if (Str::charAt($path, Str::length($path) - 1) !== '/') {
-            $path .= '/';
+        if (Str::charAt($path, Str::length($path) - 1) !== DIRECTORY_SEPARATOR) {
+            $path .= DIRECTORY_SEPARATOR;
         }
 
         return $path;
