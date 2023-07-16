@@ -5,8 +5,8 @@ namespace Vuetik\VuetikLaravel\Factories;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use Vuetik\VuetikLaravel\Utils;
 use Intervention\Image\ImageManagerStatic as Image;
+use Vuetik\VuetikLaravel\Utils;
 
 class ImageFactory
 {
@@ -19,17 +19,17 @@ class ImageFactory
     public function __construct(array $ids, array $binaries)
     {
         $this->ids = collect($ids)
-            ->map(fn($item) => new IdImageFactory($item['id'], $item['width'], $item['height']))
+            ->map(fn ($item) => new IdImageFactory($item['id'], $item['width'], $item['height']))
             ->toArray();
 
         $this->binaries = collect($binaries)
             ->filter(function (array $item) {
                 try {
-                    $binaryFile = base64_decode(Str::after($item['file'], "data:image/png;base64,"));
+                    $binaryFile = base64_decode(Str::after($item['file'], 'data:image/png;base64,'));
                     $image = Image::make($binaryFile);
 
                     // store image at temp folder
-                    $temporaryImgFilePath = tempnam(sys_get_temp_dir(), 'temp_vuetik_imgs') . $image->extension;
+                    $temporaryImgFilePath = tempnam(sys_get_temp_dir(), 'temp_vuetik_imgs').$image->extension;
                     $image->save($temporaryImgFilePath);
 
                     $payload = new UploadedFile(
@@ -40,12 +40,13 @@ class ImageFactory
                     );
 
                     $isValid = Validator::make([
-                        'image' => $payload
+                        'image' => $payload,
                     ], [
-                        'image' => Utils::getImageValidationRules()
+                        'image' => Utils::getImageValidationRules(),
                     ])->valid();
 
                     unlink($temporaryImgFilePath); // unlink the image upon finished validated
+
                     return $isValid;
                 } catch (\Exception $e) {
                     return false;
@@ -53,7 +54,7 @@ class ImageFactory
             })
             ->map(function (array $item) {
                 $decodedData = base64_decode($item['file']);
-                $fileName = Str::ulid()->toRfc4122() . '.png';
+                $fileName = Str::ulid()->toRfc4122().'.png';
 
                 return new BinaryImageFactory(
                     $fileName,
@@ -62,7 +63,7 @@ class ImageFactory
                     $item['height'] ?? null
                 );
             })
-            ->filter(fn(null|BinaryImageFactory $item) => $item !== null)
+            ->filter(fn (?BinaryImageFactory $item) => $item !== null)
             ->toArray();
     }
 }
