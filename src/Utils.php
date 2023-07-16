@@ -29,7 +29,7 @@ class Utils
 
     public static function getImageValidationRules(): array
     {
-        return ["required", "image", "max:".config('vuetik-laravel.max_upload_size', 2048)];
+        return ['required', 'image', 'max:'.config('vuetik-laravel.max_upload_size', 2048)];
     }
 
     public static function getBase64Image(string $encodedBase64): string
