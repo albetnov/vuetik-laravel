@@ -23,4 +23,9 @@ class Utils
 
         return $path;
     }
+
+    public static function getImageValidationRules(): array
+    {
+        return ["required", "image", "max:".config('vuetik-laravel.max_upload_size', 2048)];
+    }
 }
