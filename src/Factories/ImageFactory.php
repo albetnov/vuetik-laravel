@@ -23,43 +23,20 @@ class ImageFactory
             ->toArray();
 
         $this->binaries = collect($binaries)
-            ->filter(function (array $item) {
-                try {
-                    $binaryFile = base64_decode(Str::after($item['file'], "data:image/png;base64,"));
-                    $image = Image::make($binaryFile);
-
-                    // store image at temp folder
-                    $temporaryImgFilePath = tempnam(sys_get_temp_dir(), 'temp_vuetik_imgs') . $image->extension;
-                    $image->save($temporaryImgFilePath);
-
-                    $payload = new UploadedFile(
-                        path: $temporaryImgFilePath,
-                        originalName: $image->basename,
-                        mimeType: $image->mime(),
-                        test: true // test has to be set to true to avoid is_uploaded_file validation.
-                    );
-
-                    $isValid = Validator::make([
-                        'image' => $payload
-                    ], [
-                        'image' => Utils::getImageValidationRules()
-                    ])->valid();
-
-                    unlink($temporaryImgFilePath); // unlink the image upon finished validated
-                    return $isValid;
-                } catch (\Exception $e) {
-                    return false;
-                }
-            })
             ->map(function (array $item) {
-                $decodedData = base64_decode($item['file']);
+                $decodedImage = Utils::getBase64Image($item['file']);
+
+                if(Utils::validateBufferImage($decodedImage)) {
+                    return null;
+                }
+
                 $fileName = Str::ulid()->toRfc4122() . '.png';
 
                 return new BinaryImageFactory(
-                    $fileName,
-                    $decodedData,
-                    $item['width'] ?? null,
-                    $item['height'] ?? null
+                    uniqidName: $fileName,
+                    content: $decodedImage,
+                    width: $item['width'] ?? null,
+                    height: $item['height'] ?? null
                 );
             })
             ->filter(fn(null|BinaryImageFactory $item) => $item !== null)
