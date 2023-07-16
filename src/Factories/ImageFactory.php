@@ -2,11 +2,8 @@
 
 namespace Vuetik\VuetikLaravel\Factories;
 
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Vuetik\VuetikLaravel\Utils;
-use Intervention\Image\ImageManagerStatic as Image;
 
 class ImageFactory
 {
@@ -19,18 +16,18 @@ class ImageFactory
     public function __construct(array $ids, array $binaries)
     {
         $this->ids = collect($ids)
-            ->map(fn($item) => new IdImageFactory($item['id'], $item['width'], $item['height']))
+            ->map(fn ($item) => new IdImageFactory($item['id'], $item['width'], $item['height']))
             ->toArray();
 
         $this->binaries = collect($binaries)
             ->map(function (array $item) {
                 $decodedImage = Utils::getBase64Image($item['file']);
 
-                if(Utils::validateBufferImage($decodedImage)) {
+                if (Utils::validateBufferImage($decodedImage)) {
                     return null;
                 }
 
-                $fileName = Str::ulid()->toRfc4122() . '.png';
+                $fileName = Str::ulid()->toRfc4122().'.png';
 
                 return new BinaryImageFactory(
                     uniqidName: $fileName,
@@ -39,7 +36,7 @@ class ImageFactory
                     height: $item['height'] ?? null
                 );
             })
-            ->filter(fn(null|BinaryImageFactory $item) => $item !== null)
+            ->filter(fn (?BinaryImageFactory $item) => $item !== null)
             ->toArray();
     }
 }

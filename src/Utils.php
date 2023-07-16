@@ -34,7 +34,7 @@ class Utils
 
     public static function getBase64Image(string $encodedBase64): string
     {
-        return base64_decode(Str::after($encodedBase64, "data:image/png;base64,"));
+        return base64_decode(Str::after($encodedBase64, 'data:image/png;base64,'));
     }
 
     public static function validateBufferImage(string $buffer): bool
@@ -43,7 +43,7 @@ class Utils
             $image = Image::make($buffer);
 
             // store image at temp folder
-            $temporaryImgFilePath = tempnam(sys_get_temp_dir(), 'temp_vuetik_imgs') . $image->extension;
+            $temporaryImgFilePath = tempnam(sys_get_temp_dir(), 'temp_vuetik_imgs').$image->extension;
             $image->save($temporaryImgFilePath);
 
             $payload = new UploadedFile(
@@ -54,12 +54,13 @@ class Utils
             );
 
             $isValid = Validator::make([
-                'image' => $payload
+                'image' => $payload,
             ], [
-                'image' => Utils::getImageValidationRules()
+                'image' => Utils::getImageValidationRules(),
             ])->fails();
 
             unlink($temporaryImgFilePath); // unlink the image upon finished validated
+
             return $isValid;
         } catch (\Exception $e) {
             return true;
