@@ -124,7 +124,7 @@ class VuetikLaravel
         });
 
         return new ContentFactory($editor->getHTML(),
-            new ImageFactory($image['ids'], $image['binaries'])
+            new ImageFactory($image['ids'], $image['binaries'], Arr::get($options, 'image.throwOnFail', false))
         );
     }
 }

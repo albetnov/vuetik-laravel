@@ -1,0 +1,17 @@
+{
+    "type": "doc",
+    "content": [
+        {
+            "type": "extendedImage",
+            "attrs": {
+                "src": "data:image/png;base64,ewoiZGF0YSI6ICJ0ZXN0Igp9",
+                "alt": null,
+                "title": null,
+                "class": "rounded-lg my-2 max-w-full max-h-full",
+                "width": 288,
+                "height": 288,
+                "data-image-id": null
+            }
+        }
+    ]
+}

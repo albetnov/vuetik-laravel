@@ -13,17 +13,17 @@ class ImageFactory
     /** @var array<BinaryImageFactory> */
     public readonly array $binaries;
 
-    public function __construct(array $ids, array $binaries)
+    public function __construct(array $ids, array $binaries, bool $throwOnDecodingFail = false)
     {
         $this->ids = collect($ids)
             ->map(fn ($item) => new IdImageFactory($item['id'], $item['width'], $item['height']))
             ->toArray();
 
         $this->binaries = collect($binaries)
-            ->map(function (array $item) {
+            ->map(function (array $item) use($throwOnDecodingFail) {
                 $decodedImage = Utils::getBase64Image($item['file']);
 
-                if (Utils::validateBufferImage($decodedImage)) {
+                if (Utils::validateBufferImage($decodedImage, $throwOnDecodingFail)) {
                     return null;
                 }
 
