@@ -53,30 +53,33 @@ class Utils
     public static function validateBufferImage(string $buffer, bool $throwOnFail = false): bool
     {
         try {
-        $image = Image::make($buffer);
+            $image = Image::make($buffer);
 
-        // store image at temp folder
-        $temporaryImgFilePath = tempnam(sys_get_temp_dir(), 'temp_vuetik_imgs').$image->extension;
-        $image->save($temporaryImgFilePath);
+            // store image at temp folder
+            $temporaryImgFilePath = tempnam(sys_get_temp_dir(), 'temp_vuetik_imgs').$image->extension;
+            $image->save($temporaryImgFilePath);
 
-        $payload = new UploadedFile(
-            path: $temporaryImgFilePath,
-            originalName: $image->basename,
-            mimeType: $image->mime(),
-            test: true // test has to be set to true to avoid is_uploaded_file validation.
-        );
+            $payload = new UploadedFile(
+                path: $temporaryImgFilePath,
+                originalName: $image->basename,
+                mimeType: $image->mime(),
+                test: true // test has to be set to true to avoid is_uploaded_file validation.
+            );
 
-        $isValid = Validator::make([
-            'image' => $payload,
-        ], [
-            'image' => Utils::getImageValidationRules(),
-        ])->fails();
+            $isValid = Validator::make([
+                'image' => $payload,
+            ], [
+                'image' => Utils::getImageValidationRules(),
+            ])->fails();
 
-        unlink($temporaryImgFilePath); // unlink the image upon finished validated
+            unlink($temporaryImgFilePath); // unlink the image upon finished validated
 
-        return $isValid;
+            return $isValid;
         } catch (\Exception $e) {
-            if($throwOnFail) throw $e; // rethrow if on fail set to true.
+            if ($throwOnFail) {
+                throw $e;
+            } // rethrow if on fail set to true.
+
             return true;
         }
     }

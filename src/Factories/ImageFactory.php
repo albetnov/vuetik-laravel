@@ -20,7 +20,7 @@ class ImageFactory
             ->toArray();
 
         $this->binaries = collect($binaries)
-            ->map(function (array $item) use($throwOnDecodingFail) {
+            ->map(function (array $item) use ($throwOnDecodingFail) {
                 $decodedImage = Utils::getBase64Image($item['file']);
 
                 if (Utils::validateBufferImage($decodedImage, $throwOnDecodingFail)) {
