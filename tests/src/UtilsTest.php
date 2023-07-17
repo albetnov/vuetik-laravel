@@ -52,12 +52,12 @@ it('failed validating invalid image', function () {
         ->toThrow(NotReadableException::class);
 })->throws(NotReadableException::class);
 
-it("replace path prefix match with OS directory seperator", function () {
-    $osPathable = "test".DIRECTORY_SEPARATOR."example".DIRECTORY_SEPARATOR;
+it('replace path prefix match with OS directory seperator', function () {
+    $osPathable = 'test'.DIRECTORY_SEPARATOR.'example'.DIRECTORY_SEPARATOR;
 
-    $pathUnix = "test/example";
+    $pathUnix = 'test/example';
     expect(Utils::parseStoragePath($pathUnix))->toEqual($osPathable);
 
-    $pathNonUnix = "test\\example";
+    $pathNonUnix = 'test\\example';
     expect(Utils::parseStoragePath($pathNonUnix))->toEqual($osPathable);
 });
