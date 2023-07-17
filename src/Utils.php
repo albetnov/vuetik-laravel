@@ -22,12 +22,12 @@ class Utils
         }
 
         // Windows Compatibility Path Separator
-        if(Str::contains($path, "/")) {
-            $path = Str::replace("/", DIRECTORY_SEPARATOR, $path);
+        if (Str::contains($path, '/')) {
+            $path = Str::replace('/', DIRECTORY_SEPARATOR, $path);
         }
 
-        if(Str::contains($path, "\\")) {
-            $path = Str::replace("\\", DIRECTORY_SEPARATOR, $path);
+        if (Str::contains($path, '\\')) {
+            $path = Str::replace('\\', DIRECTORY_SEPARATOR, $path);
         }
 
         if (Str::charAt($path, Str::length($path) - 1) !== DIRECTORY_SEPARATOR) {
