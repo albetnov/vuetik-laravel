@@ -51,3 +51,13 @@ it("failed validating invalid image", function () {
     expect(Utils::validateBufferImage(base64_decode($base64), true))
         ->toThrow(NotReadableException::class);
 })->throws(NotReadableException::class);
+
+it("replace path prefix match with OS directory seperator", function () {
+    $osPathable = "test".DIRECTORY_SEPARATOR."example".DIRECTORY_SEPARATOR;
+
+    $pathUnix = "test/example";
+    expect(Utils::parseStoragePath($pathUnix))->toEqual($osPathable);
+
+    $pathNonUnix = "test\\example";
+    expect(Utils::parseStoragePath($pathNonUnix))->toEqual($osPathable);
+});

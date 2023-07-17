@@ -21,6 +21,15 @@ class Utils
             $path = config('vuetik-laravel.storage.path');
         }
 
+        // Windows Compatibility Path Separator
+        if(Str::contains($path, "/")) {
+            $path = Str::replace("/", DIRECTORY_SEPARATOR, $path);
+        }
+
+        if(Str::contains($path, "\\")) {
+            $path = Str::replace("\\", DIRECTORY_SEPARATOR, $path);
+        }
+
         if (Str::charAt($path, Str::length($path) - 1) !== DIRECTORY_SEPARATOR) {
             $path .= DIRECTORY_SEPARATOR;
         }
