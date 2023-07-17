@@ -53,10 +53,13 @@ class Utils
     public static function validateBufferImage(string $buffer, bool $throwOnFail = false): bool
     {
         try {
-            $image = Image::make($buffer);
+            $format = config('vuetik-laravel.base64_save_format', 'png');
+
+            $image = Image::make($buffer)
+                ->encode($format); // force to png in order to encode the iamge to a png file.
 
             // store image at temp folder
-            $temporaryImgFilePath = tempnam(sys_get_temp_dir(), 'temp_vuetik_imgs').$image->extension;
+            $temporaryImgFilePath = tempnam(sys_get_temp_dir(), 'temp_vuetik_imgs').".$format";
             $image->save($temporaryImgFilePath);
 
             $payload = new UploadedFile(
