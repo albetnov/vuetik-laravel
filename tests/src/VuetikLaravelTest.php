@@ -156,10 +156,10 @@ it('Failed rendered twitter embed due to invalid id (with exception)', function 
     expect($content)->toThrow(TwitterParseException::class);
 })->throws(TwitterParseException::class);
 
-it("Skipped string strategy invalid image due to invalid", function () {
-   $payload = file_get_contents(__DIR__."/examples/image_base64_invalid.json");
+it('Skipped string strategy invalid image due to invalid', function () {
+    $payload = file_get_contents(__DIR__.'/examples/image_base64_invalid.json');
 
-   $content = VuetikLaravel::parseJson($payload);
+    $content = VuetikLaravel::parseJson($payload);
 
-   expect($content->image->binaries)->toBeEmpty();
+    expect($content->image->binaries)->toBeEmpty();
 });
