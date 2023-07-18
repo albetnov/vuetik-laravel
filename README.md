@@ -7,7 +7,14 @@
 
 Server Side Integration and Transformers of [Vue-Tik](https://github.com/albetnov/vue-tik) for Laravel.
 
-> Still work in progress (DEVELOPMENT)
+## Features
+
+- Image Upload Routing
+- Image Cleanup Cron Job
+- Automatic base64 image separation and validation to desired object storage
+- Ready Twitter Content Hydration
+- Glide Integration
+- HTML Sanitation
 
 ## Installation
 
@@ -33,11 +40,11 @@ php artisan vendor:publish --tag="vuetik-laravel-config"
 This is the contents of the published config file:
 
 ```php
-return [
+[
     'max_upload_size' => 2048,
     'storage' => [
         'disk' => 'local',
-        'path' => storage_path('public/vuetik-laravel'),
+        'path' => 'images/',
     ],
     'table' => 'vuetik_images',
     'image_vendor_route' => '/img',
@@ -46,13 +53,20 @@ return [
         'sign_key' => env('APP_KEY'),
         'img_modifiers' => [],
     ],
+    'purge_after' => '-2 days',
+    'base64_to_storage' => [
+        'enable' => true,
+        'save_format' => 'png',
+        'quality' => 100
+    ],
 ];
 ```
 
 ## Usage
 
-Vuetik Laravel provide integration for the image upload routes and content parsing. For registering the image upload
-routes with VueTik requirement you can easily call:
+Vuetik Laravel provides integration for the image upload routes and content parsing.
+For registering the image upload
+routes with VueTik requirement, you can easily call:
 
 ```php
 public function boot() {
@@ -74,8 +88,66 @@ VuetikLaravel::parse($htmlOrDecodedJson);
 VuetikLaravel::parseJson($jsonString);
 ```
 
-> Even though the HTML Parser is working, it possible the end result is kind of inaccurate. Therefore using
-> JSON approach is advised.
+> Even though the HTML Parser is working, it is possible the end result is kind of inaccurate.
+> Therefore, using JSON approach is advised.
+
+### Available Options
+
+Both the `parse` and `parseJson` API accepts array `$options` which have the following content:
+
+| Key                    	 | Description                                                                                                                                          	 | Type     	 | Default Value                                            	 |
+|--------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|------------|------------------------------------------------------------|
+| `twitter.throwOnFail`  	 | Set whatever twitter content parsing should throw an exception when fail or just  return `Failed Fetching Twitter` paragraph.                        	 | `bool`   	 | `false`                                                  	 |
+| `image.base64_to_disk` 	 | Determine if `base64` based image should be moved to disk or not (allow cron cleanup to work either)                                                 	 | `bool`   	 | `config('vuetik-laravel.base64_to_storage.enable')`      	 |
+| `image.throwOnFail`    	 | Set whatever `base64` based image parsing should throw an exception when Vuetik Laravel failed validating it. (ignored if `base64_to_disk` is false) 	 | `bool`   	 | `false`                                                  	 |
+| `image.saveFormat`     	 | Set which format to encode for `base64` image when saved to the disk  (ignored if `base64_to_disk` is false)                                         	 | `string` 	 | `config('vuetik-laravel.base64_to_storage.save_format')` 	 |
+| `image.disk`           	 | Set which driver to use for Vuetik Laravel to save image into.                                                                                       	 | `string` 	 | `config('vuetik-laravel.storage.disk)`                   	 |
+| `image.quality`        	 | Set image quality for `base64` decoding                                                                                                              	 | `int`    	 | `config('vuetik-laravel.base64_to_storage.quality')`     	 |
+| `image.persistWidth`   	 | Determine if `width` attribute should be kept (If you have glide integration enabled, the image will be re-coded based on given attribute)           	 | `bool`   	 | `false`                                                  	 |
+| `image.persistHeight`  	 | Determine if `height` attribute should be kept (If you have glide integration enabled, the image will be re-coded based on given attribute)          	 | `bool`   	 | `false`                                                  	 |
+
+Example Passing:
+
+```php
+use Vuetik\VuetikLaravel\VuetikLaravel;
+
+VuetikLaravel::parseJson($json, [
+    'twitter' => [
+        'throwOnFail' => true
+    ],
+    'image' => [
+        'throwOnFail' => true
+    ]
+])
+```
+                                                                                
+## Cleaning up unused image
+
+To clean up an unused image, Vuetik Laravel has provided you with `purge:unused-images` commands which allow you to
+delete an image created after `vuetik-laravel.purge_after` with `status` of `P`.
+
+Simply schedule the command in `Kernel.php`:
+```php
+protected function schedule(Schedule $schedule): void
+{
+    $schedule->command('purge:unused-images')->daily();
+}
+```
+
+The cleanup command also supports the following arguments:
+
+- `--after` override `purge_after` config for the task
+- `--disk` override `storage.disk` config for the task
+- `--path` override `storage.path` config for the task
+- `--show-log` enable verbosity over what going on with the task.
+
+### How is It Work?
+
+Everytime you upload an image or using base64 images, Vuetik Laravel will always keep track of these images and put them
+into a database, these records have their `created_at` time and a status of either 'P' or 'A'. 
+
+And as you already aware Vuetik will only delete images with status of 'P'
+and `created_at` matches `purge_after` criteria.
 
 ## Testing
 
