@@ -42,15 +42,15 @@ class ImageManager
     {
         $images = $contentFactory->images;
 
-        foreach($images as $image) {
+        foreach ($images as $image) {
             VuetikImages::updateOrCreate([
-                'id' => $image->id
+                'id' => $image->id,
             ], [
                 'props' => [
                     'width' => $image->width,
-                    'height' => $image->height
+                    'height' => $image->height,
                 ],
-                'status' => VuetikImages::ACTIVE
+                'status' => VuetikImages::ACTIVE,
             ]);
         }
     }

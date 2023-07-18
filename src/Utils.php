@@ -2,11 +2,7 @@
 
 namespace Vuetik\VuetikLaravel;
 
-use Exception;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use Intervention\Image\ImageManagerStatic as Image;
 
 class Utils
 {

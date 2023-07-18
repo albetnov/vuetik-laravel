@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Str;
-use Intervention\Image\Exception\NotReadableException;
 use Vuetik\VuetikLaravel\Utils;
 
 it('Parse all attributes to a string', function () {

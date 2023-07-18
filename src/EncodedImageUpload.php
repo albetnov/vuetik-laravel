@@ -21,7 +21,7 @@ class EncodedImageUpload
 
     private function validate(Image $image, string $format, string $fileName): bool
     {
-        $path = tempnam(sys_get_temp_dir(), "vuetik_images").$format;
+        $path = tempnam(sys_get_temp_dir(), 'vuetik_images').$format;
         $image->save($path);
 
         $payload = new UploadedFile(
@@ -62,8 +62,8 @@ class EncodedImageUpload
     {
         try {
             DB::beginTransaction();
-            $fileName = Str::ulid()->toRfc4122() . ".$saveFormat";
-            $path = Utils::parseStoragePath() . $fileName;
+            $fileName = Str::ulid()->toRfc4122().".$saveFormat";
+            $path = Utils::parseStoragePath().$fileName;
 
             $imageFile = $this->store(
                 format: $saveFormat,
@@ -76,11 +76,13 @@ class EncodedImageUpload
                 image: $imageFile,
                 format: $saveFormat,
                 fileName: $fileName
-            )) return false;
+            )) {
+                return false;
+            }
 
             $image = VuetikImages::create([
                 'file_name' => $fileName,
-                'status' => VuetikImages::PENDING // should stay pending.
+                'status' => VuetikImages::PENDING, // should stay pending.
             ]);
 
             DB::commit();
@@ -88,7 +90,10 @@ class EncodedImageUpload
             return $image;
         } catch (\Exception $e) {
             DB::rollBack();
-            if($throwOnFail) throw $e;
+            if ($throwOnFail) {
+                throw $e;
+            }
+
             return false;
         }
     }

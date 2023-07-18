@@ -17,6 +17,6 @@ return [
     'base64_to_storage' => [
         'enable' => true,
         'save_format' => 'png',
-        'quality' => 100
+        'quality' => 100,
     ],
 ];

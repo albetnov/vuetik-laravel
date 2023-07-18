@@ -113,16 +113,22 @@ class VuetikLaravel
                 if ($attrs->width) {
                     isset($image['id']) && $image['width'] = $attrs->width;
 
-                    if (!Arr::get($options, "image.persistWidth", false)) unset($attrs->width);
+                    if (! Arr::get($options, 'image.persistWidth', false)) {
+                        unset($attrs->width);
+                    }
                 }
 
                 if ($attrs->height) {
                     isset($image['id']) && $image['height'] = $attrs->height;
 
-                    if (!Arr::get($options, 'image.persistHeight', false)) unset($attrs->height);
+                    if (! Arr::get($options, 'image.persistHeight', false)) {
+                        unset($attrs->height);
+                    }
                 }
 
-                if (!empty($image)) $images[] = new ImageFactory($image);
+                if (! empty($image)) {
+                    $images[] = new ImageFactory($image);
+                }
             }
         });
 

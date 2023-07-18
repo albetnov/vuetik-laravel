@@ -9,8 +9,8 @@ use Vuetik\VuetikLaravel\Utils;
 
 uses(RefreshDatabase::class);
 
-it("successfully save image", function () {
-    $image = json_decode(file_get_contents(__DIR__ . "/examples/image_base64.json"), true)['content'][0]['attrs']['src'];
+it('successfully save image', function () {
+    $image = json_decode(file_get_contents(__DIR__.'/examples/image_base64.json'), true)['content'][0]['attrs']['src'];
 
     Storage::fake('images');
     $encodedImageUpload = new EncodedImageUpload($image);
@@ -24,11 +24,11 @@ it("successfully save image", function () {
     expect($uploadedImage)->toBeInstanceOf(VuetikImages::class)
         ->and($uploadedImage->status)->toEqual(VuetikImages::PENDING);
 
-    Storage::disk('images')->assertExists(Utils::parseStoragePath() . $uploadedImage->file_name);
+    Storage::disk('images')->assertExists(Utils::parseStoragePath().$uploadedImage->file_name);
 });
 
-it("failed save image (invalid base64)", function () {
-    $encodedImageUpload = new EncodedImageUpload("fake base64");
+it('failed save image (invalid base64)', function () {
+    $encodedImageUpload = new EncodedImageUpload('fake base64');
     $uploadedImage = $encodedImageUpload->save(
         throwOnFail: false,
         saveFormat: 'png',
@@ -39,8 +39,8 @@ it("failed save image (invalid base64)", function () {
     expect($uploadedImage)->toBeFalse();
 });
 
-it("failed save image (with exception)", function () {
-    $encodedImageUpload = new EncodedImageUpload("fake base64");
+it('failed save image (with exception)', function () {
+    $encodedImageUpload = new EncodedImageUpload('fake base64');
     $uploadedImage = $encodedImageUpload->save(
         throwOnFail: true,
         saveFormat: 'png',
@@ -51,8 +51,8 @@ it("failed save image (with exception)", function () {
     expect($uploadedImage)->toThrow(NotReadableException::class);
 })->throws(NotReadableException::class);
 
-it("encoded to jpg", function () {
-    $image = json_decode(file_get_contents(__DIR__ . "/examples/image_base64.json"), true)['content'][0]['attrs']['src'];
+it('encoded to jpg', function () {
+    $image = json_decode(file_get_contents(__DIR__.'/examples/image_base64.json'), true)['content'][0]['attrs']['src'];
 
     Storage::fake('images');
     $encodedImageUpload = new EncodedImageUpload($image);
@@ -64,5 +64,5 @@ it("encoded to jpg", function () {
     );
 
     expect($uploadedImage->file_name)->toContain('jpg');
-    Storage::disk('images')->assertExists(Utils::parseStoragePath() . $uploadedImage->file_name);
+    Storage::disk('images')->assertExists(Utils::parseStoragePath().$uploadedImage->file_name);
 });
