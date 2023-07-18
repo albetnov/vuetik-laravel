@@ -2,7 +2,6 @@
 
 namespace Vuetik\VuetikLaravel;
 
-use Illuminate\Support\Facades\Storage;
 use League\Glide\Urls\UrlBuilderFactory;
 use Vuetik\VuetikLaravel\Factories\ContentFactory;
 use Vuetik\VuetikLaravel\Models\VuetikImages;
@@ -33,46 +32,26 @@ class ImageManager
     /**
      * store
      * Allows you to store images generated from parsed content.
-     * This function can both store binaries and pre-upload and respect given attributes which later can be served
+     * This function allows you to mark images as being used and update the props (if exist) which later can be
+     * parsed by glide
      * via Glide for maximum optimization
      *
      * @see getGlideUrl for serving the image with props
      */
-    public static function store(ContentFactory $contentFactory, \Closure $binaryStorage = null): void
+    public static function store(ContentFactory $contentFactory): void
     {
-        $uploadedIds = $contentFactory->image->ids;
-        $binaries = $contentFactory->image->binaries;
+        $images = $contentFactory->images;
 
-        foreach ($uploadedIds as $uploadedId) {
-            $img = VuetikImages::find($uploadedId->id);
-
-            $img->update([
-                'status' => VuetikImages::ACTIVE,
-                'props' => $uploadedId->hasProps ? [
-                    'width' => $uploadedId->width ?? 0,
-                    'height' => $uploadedId->height ?? 0,
-                ] : null,
+        foreach($images as $image) {
+            VuetikImages::updateOrCreate([
+                'id' => $image->id
+            ], [
+                'props' => [
+                    'width' => $image->width,
+                    'height' => $image->height
+                ],
+                'status' => VuetikImages::ACTIVE
             ]);
-        }
-
-        foreach ($binaries as $binary) {
-            VuetikImages::create([
-                'file_name' => $binary->uniqidName,
-                'status' => VuetikImages::ACTIVE,
-                'props' => $binary->hasProps ? [
-                    'width' => $binary->width ?? 0,
-                    'height' => $binary->height ?? 0,
-                ] : null,
-            ]);
-
-            if ($binaryStorage) {
-                $binaryStorage($binary->uniqidName, $binary->content);
-            } else {
-                Storage::disk(config('vuetik-laravel.storage.disk'))->put(
-                    Utils::parseStoragePath().$binary->uniqidName,
-                    $binary->content
-                );
-            }
         }
     }
 

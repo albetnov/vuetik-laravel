@@ -14,5 +14,9 @@ return [
         'img_modifiers' => [],
     ],
     'purge_after' => '-2 days',
-    'base64_save_format' => 'png'
+    'base64_to_storage' => [
+        'enable' => true,
+        'save_format' => 'png',
+        'quality' => 100
+    ],
 ];

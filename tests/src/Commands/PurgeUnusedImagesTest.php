@@ -26,7 +26,7 @@ beforeEach(function () {
 
 it('deleted all seeded images (due to expiry being -2 days and all of data is -5 days)', function () {
     artisan('purge:unused-images')
-        ->expectsOutput('Unused Image Purged!')
+        ->expectsOutput('Unused ImageFactory Purged!')
         ->doesntExpectOutputToContain('Failed deleting file')
         ->assertExitCode(0);
 

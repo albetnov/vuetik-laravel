@@ -57,7 +57,7 @@ class PurgeUnusedImages extends Command
 
         }
 
-        $this->info('Unused Image Purged!');
+        $this->info('Unused ImageFactory Purged!');
 
         return self::SUCCESS;
     }

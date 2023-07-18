@@ -80,51 +80,55 @@ class VuetikLaravel
             ],
         ]);
 
-        $image = [
-            'ids' => [],
-            'binaries' => [],
-        ];
+        $images = [];
 
-        $editor->setContent($content)->descendants(function (&$node) use (&$image) {
+        $editor->setContent($content)->descendants(function (&$node) use (&$images, $options) {
             if ($node->type === 'extendedImage') {
                 $attrs = $node->attrs;
 
-                $ids = [];
-                $binaries = [];
+                $image = [];
 
                 if (Str::startsWith($attrs->src, 'data:image/png;base64,')) {
-                    $binaries['file'] = $attrs->src;
+                    if (Arr::get($options, 'image.base64_to_disk', config('vuetik-laravel.base64_to_storage.enable', true))) {
+                        $encodedUpload = new EncodedImageUpload($attrs->src);
+                        $uploadedImage = $encodedUpload->save(
+                            throwOnFail: Arr::get($options, 'image.throwOnFail', false),
+                            saveFormat: Arr::get($options, 'image.saveFormat', config('vuetik-laravel.base64_to_storage.save_format', 'png')),
+                            disk: Arr::get($options, 'image.disk', config('vuetik-laravel.storage.disk', 'local')),
+                            quality: Arr::get($options, 'image.quality', config('vuetik-laravel.base64_to_storage.quality', 100))
+                        );
+
+                        if ($uploadedImage) {
+                            $attrs->src = $uploadedImage->file_name;
+                            $image['id'] = $uploadedImage->id;
+                        }
+                    }
                 }
 
                 if ($attrs->{'data-image-id'}) {
-                    $ids['id'] = $attrs->{'data-image-id'};
+                    $image['id'] = $attrs->{'data-image-id'};
                     unset($attrs->{'data-image-id'});
                 }
 
                 if ($attrs->width) {
-                    isset($ids['id']) && $ids['width'] = $attrs->width;
-                    isset($binaries['file']) && $binaries['width'] = $attrs->width;
-                    unset($attrs->width);
+                    isset($image['id']) && $image['width'] = $attrs->width;
+
+                    if (!Arr::get($options, "image.persistWidth", false)) unset($attrs->width);
                 }
 
                 if ($attrs->height) {
-                    isset($ids['id']) && $ids['height'] = $attrs->height;
-                    isset($binaries['file']) && $binaries['height'] = $attrs->height;
-                    unset($attrs->height);
+                    isset($image['id']) && $image['height'] = $attrs->height;
+
+                    if (!Arr::get($options, 'image.persistHeight', false)) unset($attrs->height);
                 }
 
-                if (! empty($ids)) {
-                    $image['ids'][] = $ids;
-                }
-
-                if (! empty($binaries)) {
-                    $image['binaries'][] = $binaries;
-                }
+                if (!empty($image)) $images[] = new ImageFactory($image);
             }
         });
 
-        return new ContentFactory($editor->getHTML(),
-            new ImageFactory($image['ids'], $image['binaries'], Arr::get($options, 'image.throwOnFail', false))
+        return new ContentFactory(
+            html: $editor->getHTML(),
+            images: $images
         );
     }
 }

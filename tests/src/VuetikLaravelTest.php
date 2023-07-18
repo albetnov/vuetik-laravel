@@ -1,10 +1,18 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Image;
+use Intervention\Image\ImageManagerStatic;
+use League\Flysystem\Config;
+use Pest\Plugins\Parallel;
+use PHPUnit\Util\GlobalState;
 use Vuetik\VuetikLaravel\Exceptions\TwitterParseException;
-use Vuetik\VuetikLaravel\Factories\BinaryImageFactory;
-use Vuetik\VuetikLaravel\Factories\IdImageFactory;
+use Vuetik\VuetikLaravel\Factories\ImageFactory;
+use Vuetik\VuetikLaravel\Models\VuetikImages;
+use Vuetik\VuetikLaravel\Utils;
 use Vuetik\VuetikLaravel\VuetikLaravel;
+use function Pest\Laravel\partialMock;
 
 beforeEach(function () {
     Route::setRoutes(new \Illuminate\Routing\RouteCollection());
@@ -18,7 +26,7 @@ it('Registered route successfully', function () {
 
 it('Rendered underlined content', function () {
     $html = '<p><u>fewfawe</u></p>';
-    $payload = file_get_contents(__DIR__.'/examples/underline.json');
+    $payload = file_get_contents(__DIR__ . '/examples/underline.json');
 
     $content = VuetikLaravel::parseJson($payload);
 
@@ -30,27 +38,32 @@ it('failed parsing json and throw exception', function () {
 })->throws(\InvalidArgumentException::class);
 
 it('Rendered extended image content', function () {
-    $payload = file_get_contents(__DIR__.'/examples/image.json');
+    $payload = file_get_contents(__DIR__ . '/examples/image.json');
     $content = VuetikLaravel::parseJson($payload);
 
     expect($content->html)->toContain('img', 'src')
-        ->and($content->image->ids)->toBeArray()
-        ->and($content->image->ids[0])->toBeInstanceOf(IdImageFactory::class);
+        ->and($content->images)->toBeArray()
+        ->and($content->images[0])->toBeInstanceOf(ImageFactory::class)
+        ->and($content->images[0]->id)->toBeString()
+        ->and($content->images[0]->width)->toEqual("564")
+        ->and($content->images[0]->height)->toEqual("564");
 });
 
 it('Rendered extended image content (base64)', function () {
-    $payload = file_get_contents(__DIR__.'/examples/image_base64.json');
+    $payload = file_get_contents(__DIR__ . '/examples/image_base64.json');
     $content = VuetikLaravel::parseJson($payload);
 
+    $image = VuetikImages::first();
+
     expect($content->html)->toContain('img', 'src')
-        ->and($content->image->binaries)->toBeArray()
-        ->and($content->image->binaries[0])->toBeInstanceOf(BinaryImageFactory::class)
-        ->and($content->image->binaries[0]->content)->toBeString();
+        ->and($content->images)->toBeArray()
+        ->and($content->images[0])->toBeInstanceOf(ImageFactory::class)
+        ->and($content->images[0]->id)->toEqual($image->id);
 });
 
 it('Rendered Text Style content', function () {
     $html = '<p><span>feawfawe</span></p>';
-    $payload = file_get_contents(__DIR__.'/examples/textStyle.json');
+    $payload = file_get_contents(__DIR__ . '/examples/textStyle.json');
 
     $content = VuetikLaravel::parseJson($payload);
 
@@ -76,7 +89,7 @@ it('Rendered Aligned Text', function () {
 });
 
 it('Rendered task list', function () {
-    $payload = file_get_contents(__DIR__.'/examples/taskList.json');
+    $payload = file_get_contents(__DIR__ . '/examples/taskList.json');
 
     $html = <<<'html'
     <ul data-type="taskList"><li data-checked="true" data-type="taskItem"><label><input type="checkbox" checked="checked"><span></span></label><div><p>fewafaewfaew</p></div></li></ul>
@@ -104,7 +117,7 @@ it('Rendered color successfully', function () {
 });
 
 it('Rendered CodeBlock successfully (Shiki Highlighted)', function () {
-    $payload = file_get_contents(__DIR__.'/examples/codeBlock.json');
+    $payload = file_get_contents(__DIR__ . '/examples/codeBlock.json');
 
     $content = VuetikLaravel::parseJson($payload);
 
@@ -112,7 +125,7 @@ it('Rendered CodeBlock successfully (Shiki Highlighted)', function () {
 });
 
 it('Rendered Youtube Embed', function () {
-    $payload = file_get_contents(__DIR__.'/examples/youtube.json');
+    $payload = file_get_contents(__DIR__ . '/examples/youtube.json');
     $html = '<iframe src="https://www.youtube.com/watch?v=WFmmS_tqV-w" width="640" height="480"></iframe>';
     $content = VuetikLaravel::parseJson($payload);
 
@@ -120,7 +133,7 @@ it('Rendered Youtube Embed', function () {
 });
 
 it('Rendered window embed', function () {
-    $payload = file_get_contents(__DIR__.'/examples/embed.json');
+    $payload = file_get_contents(__DIR__ . '/examples/embed.json');
     $html = '<iframe src="http://localhost:5173" allowfullscreen="1"></iframe>';
     $content = VuetikLaravel::parseJson($payload);
 
@@ -128,16 +141,16 @@ it('Rendered window embed', function () {
 });
 
 it('Rendered Twitter Embed', function () {
-    $payload = file_get_contents(__DIR__.'/examples/twitter.json');
+    $payload = file_get_contents(__DIR__ . '/examples/twitter.json');
 
     $content = VuetikLaravel::parseJson($payload);
-    $html = file_get_contents(__DIR__.'/examples/twitter_result.html');
+    $html = file_get_contents(__DIR__ . '/examples/twitter_result.html');
 
     expect($content->html)->toEqual(trim($html));
 });
 
 it('Failed rendered twitter embed due to invalid id', function () {
-    $payload = file_get_contents(__DIR__.'/examples/twitter_invalid.json');
+    $payload = file_get_contents(__DIR__ . '/examples/twitter_invalid.json');
 
     $content = VuetikLaravel::parseJson($payload);
 
@@ -145,7 +158,7 @@ it('Failed rendered twitter embed due to invalid id', function () {
 });
 
 it('Failed rendered twitter embed due to invalid id (with exception)', function () {
-    $payload = file_get_contents(__DIR__.'/examples/twitter_invalid.json');
+    $payload = file_get_contents(__DIR__ . '/examples/twitter_invalid.json');
 
     $content = VuetikLaravel::parseJson($payload, [
         'twitter' => [
@@ -157,9 +170,52 @@ it('Failed rendered twitter embed due to invalid id (with exception)', function 
 })->throws(TwitterParseException::class);
 
 it('Skipped string strategy invalid image due to invalid', function () {
-    $payload = file_get_contents(__DIR__.'/examples/image_base64_invalid.json');
+    $payload = file_get_contents(__DIR__ . '/examples/image_base64_invalid.json');
 
     $content = VuetikLaravel::parseJson($payload);
 
-    expect($content->image->binaries)->toBeEmpty();
+    expect($content->images)->toBeEmpty();
+});
+
+it("Check if passed parameters on Image Encode is inherited", function () {
+    config()->set('vuetik-laravel.base64_to_storage.quality', 90);
+
+    $image = file_get_contents(__DIR__."/examples/image_base64.json");
+
+    $mockedImage = Mockery::mock('overload:'.Image::class);
+    $mockedImage->shouldReceive('encode')
+        ->once()
+        ->with(\config('vuetik-laravel.base64_to_storage.save_format'), \config('vuetik-laravel.base64_to_storage.quality'))
+        ->andReturnSelf();
+
+    VuetikLaravel::parseJson($image);
+})->skip('This test have to be run in separate process or isolation from global state, Tried using native PHP Unit but I cant get it work');
+
+it("saved image according to the config", function () {
+    Storage::fake('images');
+    config()->set("vuetik-laravel.storage.disk", "images");
+    config()->set('vuetik-laravel.base64_to_storage.save_format', 'jpg');
+
+    $image = file_get_contents(__DIR__ . "/examples/image_base64.json");
+
+    $content = VuetikLaravel::parseJson($image);
+
+    $db = VuetikImages::find($content->images[0]->id);
+
+    expect($db->file_name)->toContain('jpg');
+
+    Storage::disk('images')->assertExists(Utils::parseStoragePath() . $db->file_name);
+});
+
+it("persist both width and height", function () {
+    $image = file_get_contents(__DIR__."/examples/image.json");
+
+    $content = VuetikLaravel::parseJson($image, [
+        'image' => [
+            'persistWidth' => true,
+            'persistHeight' => true
+        ]
+    ]);
+
+    expect($content->html)->toContain('width', 'height', 'src', 'img');
 });

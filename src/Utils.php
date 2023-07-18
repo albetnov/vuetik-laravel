@@ -46,44 +46,4 @@ class Utils
     {
         return base64_decode(Str::after($encodedBase64, 'data:image/png;base64,'));
     }
-
-    /**
-     * @throws Exception
-     */
-    public static function validateBufferImage(string $buffer, bool $throwOnFail = false): bool
-    {
-        try {
-            $format = config('vuetik-laravel.base64_save_format', 'png');
-
-            $image = Image::make($buffer)
-                ->encode($format); // force to png in order to encode the iamge to a png file.
-
-            // store image at temp folder
-            $temporaryImgFilePath = tempnam(sys_get_temp_dir(), 'temp_vuetik_imgs').".$format";
-            $image->save($temporaryImgFilePath);
-
-            $payload = new UploadedFile(
-                path: $temporaryImgFilePath,
-                originalName: $image->basename,
-                mimeType: $image->mime(),
-                test: true // test has to be set to true to avoid is_uploaded_file validation.
-            );
-
-            $isValid = Validator::make([
-                'image' => $payload,
-            ], [
-                'image' => Utils::getImageValidationRules(),
-            ])->fails();
-
-            unlink($temporaryImgFilePath); // unlink the image upon finished validated
-
-            return $isValid;
-        } catch (\Exception $e) {
-            if ($throwOnFail) {
-                throw $e;
-            } // rethrow if on fail set to true.
-
-            return true;
-        }
-    }
 }

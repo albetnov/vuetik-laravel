@@ -12,6 +12,7 @@ use Illuminate\Support\Carbon;
  * @property string $status
  * @property string $file_name
  * @property array $props
+ * @property string $id
  */
 class VuetikImages extends Model
 {
