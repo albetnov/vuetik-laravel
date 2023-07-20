@@ -12,7 +12,7 @@ Server Side Integration and Transformers of [Vue-Tik](https://github.com/albetno
 - Image Upload Routing
 - Image Cleanup Cron Job
 - Automatic base64 image separation and validation to desired object storage
-- Ready Twitter Content Hydration
+- Twitter Content Pre-Hydration
 - Glide Integration
 - HTML Sanitation
 
@@ -148,6 +148,24 @@ into a database, these records have their `created_at` time and a status of eith
 
 And as you already aware Vuetik will only delete images with status of 'P'
 and `created_at` matches `purge_after` criteria.
+
+## Rendering Twitter
+
+Vuetik Laravel only pre-hydrated your twitter content, so later it can be used to be parsed and hydrated
+by the Twitter WidgetJS hence the name `pre-hydrated`.
+
+In order to render twitter in your view, you need to use Twitter JS Dependency to hydrate the content:
+
+```html
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+```
+
+Alternatively if you're using Blade, Vuetik Laravel also provide a helper diretive:
+```blade
+@twitterScript
+```
+
+Which under the hood renders the script mentioned earlier.
 
 ## Testing
 
