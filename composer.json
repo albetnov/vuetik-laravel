@@ -1,7 +1,6 @@
 {
     "name": "vuetik/vuetik-laravel",
     "description": "VueTik Server Side Integrations & Transformers for Laravel",
-    "version": "1.0.0-beta",
     "keywords": [
         "vuetik",
         "laravel",
