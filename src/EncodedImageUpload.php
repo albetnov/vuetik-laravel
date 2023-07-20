@@ -21,7 +21,7 @@ class EncodedImageUpload
 
     private function validate(Image $image, string $format, string $fileName): bool
     {
-        $path = tempnam(sys_get_temp_dir(), 'vuetik_images').$format;
+        $path = tempnam(sys_get_temp_dir(), 'vuetik_images').".$format";
         $image->save($path);
 
         $payload = new UploadedFile(
