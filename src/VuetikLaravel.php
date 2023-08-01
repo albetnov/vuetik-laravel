@@ -107,7 +107,7 @@ class VuetikLaravel
 
                 if ($attrs->{'data-image-id'}) {
                     $image['id'] = $attrs->{'data-image-id'};
-                    unset($attrs->{'data-image-id'});
+                    if(!Arr::get($options, 'image.persistId', false)) unset($attrs->{'data-image-id'});
                 }
 
                 if ($attrs->width) {

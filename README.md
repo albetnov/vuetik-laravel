@@ -105,6 +105,7 @@ Both the `parse` and `parseJson` API accepts array `$options` which have the fol
 | `image.quality`        	 | Set image quality for `base64` decoding                                                                                                              	 | `int`    	 | `config('vuetik-laravel.base64_to_storage.quality')`     	 |
 | `image.persistWidth`   	 | Determine if `width` attribute should be kept (If you have glide integration enabled, the image will be re-coded based on given attribute)           	 | `bool`   	 | `false`                                                  	 |
 | `image.persistHeight`  	 | Determine if `height` attribute should be kept (If you have glide integration enabled, the image will be re-coded based on given attribute)          	 | `bool`   	 | `false`                                                  	 |
+| `image.persistId`  	     | set to keep the binded id attribute or not          	                                                                                                  | `bool`   	 | `false`                                                  	 |
 
 Example Passing:
 
@@ -119,6 +120,41 @@ VuetikLaravel::parseJson($json, [
         'throwOnFail' => true
     ]
 ])
+```
+
+## Saving Images
+
+Each uploaded image is stored with `temporary` state. To set it permanently Vuetik Laravel provides `ImageManager`
+helper.
+
+```php
+use Vuetik\VuetikLaravel\ImageManager;
+
+// quick store preuploads
+// if you have a payload containing predefined id (which usally comes from editor.storage.ids)
+// you can use storePreuploads to store the images without Vuetik Laravel to parse it. This could 
+// faster, but it's currently unable to save extra attributes (width, height, etc)
+ImageManager::storePreuploads(["id1", "id2"]);
+
+// Store all the images parsed from Vuetik Laravel
+// This method returns an array containing all the data of the stored image.
+// It's expected ContentFactory as the argument (return value of VuetikLaravel::parse() or VuetikLaravel::parseJson())
+ImageManager::store($content);
+
+// This method will return a glide url
+// based on VuetikImages model with defined base url and additional attributes.
+ImageManager::getGlideUrl($imgModel, $vendorUrl, $props);
+```
+
+You usually with use `Store` API though.
+
+```php
+
+use Vuetik\VuetikLaravel\ImageManager;use Vuetik\VuetikLaravel\VuetikLaravel;
+
+$content = VuetikLaravel::parseJson($contentWithImg);
+
+ImageManager::store($content);
 ```
                                                                                 
 ## Cleaning up unused image

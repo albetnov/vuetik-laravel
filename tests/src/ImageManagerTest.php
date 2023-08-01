@@ -73,12 +73,14 @@ it('store all pre-upload photo', function () {
 
     $content = VuetikLaravel::parseJson($payload);
 
-    ImageManager::store($content);
+    $storedImages = ImageManager::store($content);
 
     $img = VuetikImages::find($content->images[0]->id);
 
     expect($img->file_name)->toBe('example.png')
-        ->and($img->status)->toBe(VuetikImages::ACTIVE);
+        ->and($img->status)->toBe(VuetikImages::ACTIVE)
+        ->and($storedImages)->toBeArray()
+    ->and($storedImages[0])->toBeInstanceOf(VuetikImages::class);
 });
 
 it('Can generate glide url (with props)', function () {

@@ -33,17 +33,17 @@ class ImageManager
      * store
      * Allows you to store images generated from parsed content.
      * This function allows you to mark images as being used and update the props (if exist) which later can be
-     * parsed by glide
-     * via Glide for maximum optimization
+     * parsed by glide for maximum optimization.
      *
      * @see getGlideUrl for serving the image with props
      */
-    public static function store(ContentFactory $contentFactory): void
+    public static function store(ContentFactory $contentFactory): array
     {
         $images = $contentFactory->images;
+        $storage = [];
 
         foreach ($images as $image) {
-            VuetikImages::updateOrCreate([
+            $storage[] = VuetikImages::updateOrCreate([
                 'id' => $image->id,
             ], [
                 'props' => [
@@ -53,6 +53,8 @@ class ImageManager
                 'status' => VuetikImages::ACTIVE,
             ]);
         }
+
+        return $storage;
     }
 
     /**

@@ -214,3 +214,15 @@ it('persist both width and height', function () {
 
     expect($content->html)->toContain('width', 'height', 'src', 'img');
 });
+
+it("persist the image id", function () {
+    $image = file_get_contents(__DIR__.'/examples/image.json');
+
+    $content = VuetikLaravel::parseJson($image, [
+        'image' => [
+            'persistId' => true
+        ]
+    ]);
+
+    expect($content->html)->toContain('data-image-id');
+});
