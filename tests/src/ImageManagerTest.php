@@ -80,7 +80,7 @@ it('store all pre-upload photo', function () {
     expect($img->file_name)->toBe('example.png')
         ->and($img->status)->toBe(VuetikImages::ACTIVE)
         ->and($storedImages)->toBeArray()
-    ->and($storedImages[0])->toBeInstanceOf(VuetikImages::class);
+        ->and($storedImages[0])->toBeInstanceOf(VuetikImages::class);
 });
 
 it('Can generate glide url (with props)', function () {
