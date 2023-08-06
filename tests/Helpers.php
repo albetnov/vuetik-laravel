@@ -20,4 +20,9 @@ class Helpers
             'status' => VuetikImages::PENDING,
         ]);
     }
+
+    public static function getBase64ImgSrc(): string
+    {
+        return json_decode(file_get_contents(__DIR__.'/src/examples/image_base64.json'), true)['content'][0]['attrs']['src'];
+    }
 }

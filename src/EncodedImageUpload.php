@@ -66,7 +66,7 @@ class EncodedImageUpload
     /**
      * @throws Exception
      */
-    public function save(bool $throwOnFail, string $saveFormat, string $disk, int $quality): bool|VuetikImages
+    public function save(bool $throwOnFail, string $saveFormat, string $disk, int $quality, bool $autoSave): bool|VuetikImages
     {
         try {
             DB::beginTransaction();
@@ -90,7 +90,7 @@ class EncodedImageUpload
 
             $imagePayload = [
                 'file_name' => $fileName,
-                'status' => VuetikImages::PENDING, // should stay pending.
+                'status' => $autoSave ? VuetikImages::ACTIVE : VuetikImages::PENDING,
             ];
 
             if ($this->props['isSet']) {

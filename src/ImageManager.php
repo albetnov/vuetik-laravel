@@ -58,15 +58,6 @@ class ImageManager
     }
 
     /**
-     * Set the status of given image to active (saved)
-     */
-    public static function savePicture(VuetikImages $image)
-    {
-        $image->status = VuetikImages::ACTIVE;
-        $image->save();
-    }
-
-    /**
      * getGlideUrl
      * Return the url of a Glide Instance which has the image with modifiers applied.
      * Currently only supports: width, height.

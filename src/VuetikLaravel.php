@@ -106,15 +106,13 @@ class VuetikLaravel
                             saveFormat: Arr::get($options, 'image.saveFormat', config('vuetik-laravel.base64_to_storage.save_format', 'png')),
                             disk: Arr::get($options, 'image.disk', config('vuetik-laravel.storage.disk', 'local')),
                             quality: Arr::get($options, 'image.quality', config('vuetik-laravel.base64_to_storage.quality', 100)),
+                            autoSave: Arr::get($options, 'image.autoSave', true)
                         );
 
                         if ($uploadedImage) {
                             $attrs->src = Utils::getImageUrl($uploadedImage);
                             $attrs->{'data-image-id'} = $uploadedImage->id;
                             $image['id'] = $uploadedImage->id;
-                            if (Arr::get($options, 'image.autoSave', true)) {
-                                ImageManager::savePicture($uploadedImage);
-                            }
                         }
                     }
                 } else {
@@ -130,7 +128,8 @@ class VuetikLaravel
                         } else {
                             $attrs->src = Utils::getImageUrl($uploadedImage);
                             if (Arr::get($options, 'image.autoSave', true)) {
-                                ImageManager::savePicture($uploadedImage);
+                                $uploadedImage->status = VuetikImages::ACTIVE;
+                                $uploadedImage->save();
                             }
                         }
                     }
