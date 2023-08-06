@@ -93,10 +93,10 @@ class EncodedImageUpload
                 'status' => VuetikImages::PENDING, // should stay pending.
             ];
 
-            if($this->props['isSet']) {
+            if ($this->props['isSet']) {
                 unset($this->props['isSet']);
                 $imagePayload = array_merge($imagePayload, [
-                    'props' => $this->props
+                    'props' => $this->props,
                 ]);
             }
 

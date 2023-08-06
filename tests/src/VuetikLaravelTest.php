@@ -1,6 +1,5 @@
 <?php
 
-use Faker\Extension\Helper;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Exception\NotReadableException;
@@ -154,8 +153,8 @@ it('Failed rendered twitter embed due to invalid id', function () {
 
     $content = VuetikLaravel::parseJson($payload, [
         'twitter' => [
-            'throwOnFail' => false
-        ]
+            'throwOnFail' => false,
+        ],
     ]);
 
     expect($content->html)->toEqual('<p>Failed Fetching Twitter</p>');
@@ -174,8 +173,8 @@ it('Skipped string strategy invalid image', function () {
 
     $content = VuetikLaravel::parseJson($payload, [
         'image' => [
-            'throwOnFail' => false
-        ]
+            'throwOnFail' => false,
+        ],
     ]);
 
     expect($content->images)->toBeEmpty();
@@ -226,7 +225,7 @@ it('persist important image elements (width, height, id)', function () {
     expect($content->html)->toContain('width', 'height', 'src', 'img', 'data-image-id');
 });
 
-it("rendered the glide url", function () {
+it('rendered the glide url', function () {
     $image = file_get_contents(__DIR__.'/examples/image.json');
     Helpers::fakeVuetikImage();
 
@@ -235,30 +234,30 @@ it("rendered the glide url", function () {
     expect($content->html)->toContain('img', 'w=564', 'h=564', 's=');
 });
 
-it("rendered normal url", function () {
+it('rendered normal url', function () {
     config()->set('vuetik-laravel.glide.enable', false);
     Helpers::fakeVuetikImage();
 
-    $image = file_get_contents(__DIR__."/examples/image.json");
+    $image = file_get_contents(__DIR__.'/examples/image.json');
 
     $content = VuetikLaravel::parseJson($image);
-    expect($content->html)->toContain('default.jpg')->not->toContain("w=564", "h=564", "s=");
+    expect($content->html)->toContain('default.jpg')->not->toContain('w=564', 'h=564', 's=');
 });
 
-it("throw exception due to image not found", function () {
-    $image = file_get_contents(__DIR__."/examples/image.json");
+it('throw exception due to image not found', function () {
+    $image = file_get_contents(__DIR__.'/examples/image.json');
     $content = VuetikLaravel::parseJson($image);
 
     expect($content)->toThrow(ImageNotFoundException::class);
 })->throws(ImageNotFoundException::class);
 
-it("ignore the not found with appended class prefix", function () {
-    $image = file_get_contents(__DIR__."/examples/image.json");
+it('ignore the not found with appended class prefix', function () {
+    $image = file_get_contents(__DIR__.'/examples/image.json');
 
     $content = VuetikLaravel::parseJson($image, [
         'image' => [
-            'throwOnFail' => false
-        ]
+            'throwOnFail' => false,
+        ],
     ]);
     expect($content->html)->toContain('vuetik__failed__img');
 });

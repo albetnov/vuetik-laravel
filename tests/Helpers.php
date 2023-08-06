@@ -13,11 +13,11 @@ class Helpers
             'file_name' => 'default.jpg',
             'props' => json_encode([
                 'width' => 564,
-                'height' => 564
+                'height' => 564,
             ]),
             'created_at' => now(),
             'updated_at' => now(),
-            'status' => VuetikImages::PENDING
+            'status' => VuetikImages::PENDING,
         ]);
     }
 }
