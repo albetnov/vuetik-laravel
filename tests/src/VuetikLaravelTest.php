@@ -263,16 +263,16 @@ it('ignore the not found with appended class prefix', function () {
 });
 
 it("wrapped twitter in it's div container", function () {
-    $twitter = file_get_contents(__DIR__."/examples/twitter.json");
+    $twitter = file_get_contents(__DIR__.'/examples/twitter.json');
 
     $content = VuetikLaravel::parseJson($twitter);
 
     expect($content->html)->toContain('div', 'data-twitter-id=', 'data-twitter-url');
 });
 
-it("getTwitterAttrs return passed parameter arrays", function () {
+it('getTwitterAttrs return passed parameter arrays', function () {
     $exception = new TwitterParseException(['id' => 1, 'url' => 'test']);
     expect($exception->getTwitterAttrs())->toBeArray()->toHaveKeys(['id', 'url'])
-    ->and($exception->getTwitterAttrs()['id'])->toEqual(1)
-    ->and($exception->getTwitterAttrs()['url'])->toEqual('test');
+        ->and($exception->getTwitterAttrs()['id'])->toEqual(1)
+        ->and($exception->getTwitterAttrs()['url'])->toEqual('test');
 });

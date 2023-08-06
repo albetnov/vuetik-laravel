@@ -13,7 +13,7 @@ class Twitter extends Node
 
     private array $twitter = [
         'id' => null,
-        'url' => null
+        'url' => null,
     ];
 
     public function addOptions(): array
@@ -46,7 +46,8 @@ class Twitter extends Node
         ];
     }
 
-    private function wrapOnTwitterDiv(string $innerHTML): string {
+    private function wrapOnTwitterDiv(string $innerHTML): string
+    {
         return "<div data-twitter-url=\"{$this->twitter['url']}\" data-twitter-id=\"{$this->twitter['id']}\">{$innerHTML}</div>";
     }
 
