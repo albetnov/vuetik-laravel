@@ -7,6 +7,10 @@
 
 Server Side Integration and Transformers of [Vue-Tik](https://github.com/albetnov/vue-tik) for Laravel.
 
+## Migration Guide
+
+The migration from 1.x to 2.x is documented in [Migration Guide Wiki](https://github.com/albetnov/vuetik-laravel/wiki/Migrating-from-1.x)
+
 ## Features
 
 - Image Upload Routing
