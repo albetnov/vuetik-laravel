@@ -46,7 +46,7 @@ class Utils
 
     public static function getImageUrl(VuetikImages $image): string
     {
-        if(config('vuetik-laravel.glide.enable')) {
+        if (config('vuetik-laravel.glide.enable')) {
             return ImageManager::getGlideUrl($image);
         }
 

@@ -91,7 +91,7 @@ class VuetikLaravel
                 $image = [
                     'width' => $attrs->width,
                     'height' => $attrs->height,
-                    'id' => null
+                    'id' => null,
                 ];
 
                 if (Str::startsWith($attrs->src, 'data:image/png;base64,')) {
@@ -112,7 +112,7 @@ class VuetikLaravel
                             $attrs->src = Utils::getImageUrl($uploadedImage);
                             $attrs->{'data-image-id'} = $uploadedImage->id;
                             $image['id'] = $uploadedImage->id;
-                            if (Arr::get($options, "image.autoSave", true)) {
+                            if (Arr::get($options, 'image.autoSave', true)) {
                                 ImageManager::savePicture($uploadedImage);
                             }
                         }
@@ -122,14 +122,14 @@ class VuetikLaravel
                         $image['id'] = $attrs->{'data-image-id'};
                         $uploadedImage = VuetikImages::find($image['id']);
 
-                        if (!$uploadedImage) {
+                        if (! $uploadedImage) {
                             if (Arr::get($options, 'image.throwOnFail', true)) {
                                 throw new ImageNotFoundException($image['id']);
                             }
                             $attrs->class .= ' vuetik__failed__img';
                         } else {
                             $attrs->src = Utils::getImageUrl($uploadedImage);
-                            if (Arr::get($options, "image.autoSave", true)) {
+                            if (Arr::get($options, 'image.autoSave', true)) {
                                 ImageManager::savePicture($uploadedImage);
                             }
                         }

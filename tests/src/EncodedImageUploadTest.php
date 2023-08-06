@@ -68,12 +68,12 @@ it('encoded to jpg', function () {
     Storage::disk('images')->assertExists(Utils::parseStoragePath().$uploadedImage->file_name);
 });
 
-it("failed encode image (validation fails)", function () {
+it('failed encode image (validation fails)', function () {
     config()->set('vuetik-laravel.max_upload_size', 5); // set it really low in purpose of failing
     $image = json_decode(file_get_contents(__DIR__.'/examples/image_base64.json'), true)['content'][0]['attrs']['src'];
     $encodedImageUpload = new EncodedImageUpload($image);
     Storage::fake('images');
 
-    $result = $encodedImageUpload->save(true, "jpg", "images", 50);
+    $result = $encodedImageUpload->save(true, 'jpg', 'images', 50);
     expect($result)->toBeFalse();
 });
