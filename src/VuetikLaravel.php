@@ -20,9 +20,11 @@ use Tiptap\Nodes\TableRow;
 use Tiptap\Nodes\TaskItem;
 use Tiptap\Nodes\TaskList;
 use Vuetik\VuetikLaravel\Controllers\UploadImageController;
+use Vuetik\VuetikLaravel\Exceptions\ImageNotFoundException;
 use Vuetik\VuetikLaravel\Extensions\Color;
 use Vuetik\VuetikLaravel\Factories\ContentFactory;
 use Vuetik\VuetikLaravel\Factories\ImageFactory;
+use Vuetik\VuetikLaravel\Models\VuetikImages;
 use Vuetik\VuetikLaravel\Nodes\Embed;
 use Vuetik\VuetikLaravel\Nodes\ExtendedImage;
 use Vuetik\VuetikLaravel\Nodes\Twitter;
@@ -74,7 +76,7 @@ class VuetikLaravel
                 new Color(),
                 new Youtube(),
                 new Twitter([
-                    'throwOnFail' => Arr::get($options, 'twitter.throwOnFail') ?? false,
+                    'throwOnFail' => Arr::get($options, 'twitter.throwOnFail', true),
                 ]),
                 new Embed(),
             ],
@@ -86,47 +88,55 @@ class VuetikLaravel
             if ($node->type === 'extendedImage') {
                 $attrs = $node->attrs;
 
-                $image = [];
+                $image = [
+                    'width' => $attrs->width,
+                    'height' => $attrs->height,
+                    'id' => null
+                ];
 
                 if (Str::startsWith($attrs->src, 'data:image/png;base64,')) {
                     if (Arr::get($options, 'image.base64_to_disk', config('vuetik-laravel.base64_to_storage.enable', true))) {
                         $encodedUpload = new EncodedImageUpload($attrs->src);
+
+                        $encodedUpload->setProp('width', $attrs->width);
+                        $encodedUpload->setProp('height', $attrs->height);
+
                         $uploadedImage = $encodedUpload->save(
-                            throwOnFail: Arr::get($options, 'image.throwOnFail', false),
+                            throwOnFail: Arr::get($options, 'image.throwOnFail', true),
                             saveFormat: Arr::get($options, 'image.saveFormat', config('vuetik-laravel.base64_to_storage.save_format', 'png')),
                             disk: Arr::get($options, 'image.disk', config('vuetik-laravel.storage.disk', 'local')),
-                            quality: Arr::get($options, 'image.quality', config('vuetik-laravel.base64_to_storage.quality', 100))
+                            quality: Arr::get($options, 'image.quality', config('vuetik-laravel.base64_to_storage.quality', 100)),
                         );
 
                         if ($uploadedImage) {
-                            $attrs->src = $uploadedImage->file_name;
+                            $attrs->src = Utils::getImageUrl($uploadedImage);
+                            $attrs->{'data-image-id'} = $uploadedImage->id;
                             $image['id'] = $uploadedImage->id;
+                            if (Arr::get($options, "image.autoSave", true)) {
+                                ImageManager::savePicture($uploadedImage);
+                            }
+                        }
+                    }
+                } else {
+                    if ($attrs->{'data-image-id'}) {
+                        $image['id'] = $attrs->{'data-image-id'};
+                        $uploadedImage = VuetikImages::find($image['id']);
+
+                        if (!$uploadedImage) {
+                            if (Arr::get($options, 'image.throwOnFail', true)) {
+                                throw new ImageNotFoundException($image['id']);
+                            }
+                            $attrs->class .= ' vuetik__failed__img';
+                        } else {
+                            $attrs->src = Utils::getImageUrl($uploadedImage);
+                            if (Arr::get($options, "image.autoSave", true)) {
+                                ImageManager::savePicture($uploadedImage);
+                            }
                         }
                     }
                 }
 
-                if ($attrs->{'data-image-id'}) {
-                    $image['id'] = $attrs->{'data-image-id'};
-                    if(!Arr::get($options, 'image.persistId', false)) unset($attrs->{'data-image-id'});
-                }
-
-                if ($attrs->width) {
-                    isset($image['id']) && $image['width'] = $attrs->width;
-
-                    if (! Arr::get($options, 'image.persistWidth', false)) {
-                        unset($attrs->width);
-                    }
-                }
-
-                if ($attrs->height) {
-                    isset($image['id']) && $image['height'] = $attrs->height;
-
-                    if (! Arr::get($options, 'image.persistHeight', false)) {
-                        unset($attrs->height);
-                    }
-                }
-
-                if (! empty($image)) {
+                if ($image['id']) {
                     $images[] = new ImageFactory($image);
                 }
             }

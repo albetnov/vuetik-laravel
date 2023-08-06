@@ -3,6 +3,7 @@
 namespace Vuetik\VuetikLaravel;
 
 use Illuminate\Support\Str;
+use Vuetik\VuetikLaravel\Models\VuetikImages;
 
 class Utils
 {
@@ -41,5 +42,14 @@ class Utils
     public static function getBase64Image(string $encodedBase64): string
     {
         return base64_decode(Str::after($encodedBase64, 'data:image/png;base64,'));
+    }
+
+    public static function getImageUrl(VuetikImages $image): string
+    {
+        if(config('vuetik-laravel.glide.enable')) {
+            return ImageManager::getGlideUrl($image);
+        }
+
+        return url(config('vuetik-laravel.image_vendor_route'), $image->file_name);
     }
 }

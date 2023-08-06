@@ -1,11 +1,15 @@
 <?php
 
+use Faker\Extension\Helper;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Exception\NotReadableException;
 use Intervention\Image\Image;
+use Vuetik\VuetikLaravel\Exceptions\ImageNotFoundException;
 use Vuetik\VuetikLaravel\Exceptions\TwitterParseException;
 use Vuetik\VuetikLaravel\Factories\ImageFactory;
 use Vuetik\VuetikLaravel\Models\VuetikImages;
+use Vuetik\VuetikLaravel\Tests\Helpers;
 use Vuetik\VuetikLaravel\Utils;
 use Vuetik\VuetikLaravel\VuetikLaravel;
 
@@ -34,6 +38,7 @@ it('failed parsing json and throw exception', function () {
 
 it('Rendered extended image content', function () {
     $payload = file_get_contents(__DIR__.'/examples/image.json');
+    Helpers::fakeVuetikImage();
     $content = VuetikLaravel::parseJson($payload);
 
     expect($content->html)->toContain('img', 'src')
@@ -147,7 +152,11 @@ it('Rendered Twitter Embed', function () {
 it('Failed rendered twitter embed due to invalid id', function () {
     $payload = file_get_contents(__DIR__.'/examples/twitter_invalid.json');
 
-    $content = VuetikLaravel::parseJson($payload);
+    $content = VuetikLaravel::parseJson($payload, [
+        'twitter' => [
+            'throwOnFail' => false
+        ]
+    ]);
 
     expect($content->html)->toEqual('<p>Failed Fetching Twitter</p>');
 });
@@ -155,22 +164,28 @@ it('Failed rendered twitter embed due to invalid id', function () {
 it('Failed rendered twitter embed due to invalid id (with exception)', function () {
     $payload = file_get_contents(__DIR__.'/examples/twitter_invalid.json');
 
-    $content = VuetikLaravel::parseJson($payload, [
-        'twitter' => [
-            'throwOnFail' => true,
-        ],
-    ]);
+    $content = VuetikLaravel::parseJson($payload);
 
     expect($content)->toThrow(TwitterParseException::class);
 })->throws(TwitterParseException::class);
 
-it('Skipped string strategy invalid image due to invalid', function () {
+it('Skipped string strategy invalid image', function () {
     $payload = file_get_contents(__DIR__.'/examples/image_base64_invalid.json');
 
-    $content = VuetikLaravel::parseJson($payload);
+    $content = VuetikLaravel::parseJson($payload, [
+        'image' => [
+            'throwOnFail' => false
+        ]
+    ]);
 
     expect($content->images)->toBeEmpty();
 });
+
+it('throw error on string strategy invalid image', function () {
+    $payload = file_get_contents(__DIR__.'/examples/image_base64_invalid.json');
+
+    expect(VuetikLaravel::parseJson($payload))->toThrow(NotReadableException::class);
+})->throws(NotReadableException::class);
 
 it('Check if passed parameters on Image Encode is inherited', function () {
     config()->set('vuetik-laravel.base64_to_storage.quality', 90);
@@ -202,27 +217,48 @@ it('saved image according to the config', function () {
     Storage::disk('images')->assertExists(Utils::parseStoragePath().$db->file_name);
 });
 
-it('persist both width and height', function () {
+it('persist important image elements (width, height, id)', function () {
     $image = file_get_contents(__DIR__.'/examples/image.json');
+    Helpers::fakeVuetikImage();
 
-    $content = VuetikLaravel::parseJson($image, [
-        'image' => [
-            'persistWidth' => true,
-            'persistHeight' => true,
-        ],
-    ]);
+    $content = VuetikLaravel::parseJson($image);
 
-    expect($content->html)->toContain('width', 'height', 'src', 'img');
+    expect($content->html)->toContain('width', 'height', 'src', 'img', 'data-image-id');
 });
 
-it("persist the image id", function () {
+it("rendered the glide url", function () {
     $image = file_get_contents(__DIR__.'/examples/image.json');
+    Helpers::fakeVuetikImage();
+
+    $content = VuetikLaravel::parseJson($image);
+
+    expect($content->html)->toContain('img', 'w=564', 'h=564', 's=');
+});
+
+it("rendered normal url", function () {
+    config()->set('vuetik-laravel.glide.enable', false);
+    Helpers::fakeVuetikImage();
+
+    $image = file_get_contents(__DIR__."/examples/image.json");
+
+    $content = VuetikLaravel::parseJson($image);
+    expect($content->html)->toContain('default.jpg')->not->toContain("w=564", "h=564", "s=");
+});
+
+it("throw exception due to image not found", function () {
+    $image = file_get_contents(__DIR__."/examples/image.json");
+    $content = VuetikLaravel::parseJson($image);
+
+    expect($content)->toThrow(ImageNotFoundException::class);
+})->throws(ImageNotFoundException::class);
+
+it("ignore the not found with appended class prefix", function () {
+    $image = file_get_contents(__DIR__."/examples/image.json");
 
     $content = VuetikLaravel::parseJson($image, [
         'image' => [
-            'persistId' => true
+            'throwOnFail' => false
         ]
     ]);
-
-    expect($content->html)->toContain('data-image-id');
+    expect($content->html)->toContain('vuetik__failed__img');
 });

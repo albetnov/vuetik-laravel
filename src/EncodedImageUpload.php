@@ -14,9 +14,17 @@ use Vuetik\VuetikLaravel\Models\VuetikImages;
 
 class EncodedImageUpload
 {
+    private array $props = ['width' => null, 'height' => null, 'isSet' => false];
+
     public function __construct(private readonly string $content)
     {
 
+    }
+
+    public function setProp(string $name, string|int $value): void
+    {
+        $this->props[$name] = $value;
+        $this->props['isSet'] = true;
     }
 
     private function validate(Image $image, string $format, string $fileName): bool
@@ -80,10 +88,19 @@ class EncodedImageUpload
                 return false;
             }
 
-            $image = VuetikImages::create([
+            $imagePayload = [
                 'file_name' => $fileName,
                 'status' => VuetikImages::PENDING, // should stay pending.
-            ]);
+            ];
+
+            if($this->props['isSet']) {
+                unset($this->props['isSet']);
+                $imagePayload = array_merge($imagePayload, [
+                    'props' => $this->props
+                ]);
+            }
+
+            $image = VuetikImages::create($imagePayload);
 
             DB::commit();
 
