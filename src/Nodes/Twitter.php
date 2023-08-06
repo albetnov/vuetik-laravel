@@ -11,6 +11,11 @@ class Twitter extends Node
 {
     public static $name = 'twitter';
 
+    private array $twitter = [
+        'id' => null,
+        'url' => null
+    ];
+
     public function addOptions(): array
     {
         return [
@@ -41,15 +46,20 @@ class Twitter extends Node
         ];
     }
 
+    private function wrapOnTwitterDiv(string $innerHTML): string {
+        return "<div data-twitter-url=\"{$this->twitter['url']}\" data-twitter-id=\"{$this->twitter['id']}\">{$innerHTML}</div>";
+    }
+
     /**
      * @throws TwitterParseException
      */
     public function renderHTML($node, $HTMLAttributes = []): ?array
     {
-        $url = $node->attrs->{'data-twitter-url'};
+        $this->twitter['url'] = $node->attrs->{'data-twitter-url'};
+        $this->twitter['id'] = $node->attrs->{'data-twitter-id'};
 
         $response = Http::get('https://publish.twitter.com/oembed', [
-            'url' => $url,
+            'url' => $this->twitter['url'],
             'omit_script' => 1,
         ]);
 
@@ -57,16 +67,16 @@ class Twitter extends Node
 
         if ($response->status() !== 200) {
             if ($this->options['throwOnFail']) {
-                throw new TwitterParseException($url, 'Failed to parsing twitter content');
+                throw new TwitterParseException($this->twitter);
             }
 
             return [
-                'content' => '<p>Failed Fetching Twitter</p>',
+                'content' => $this->wrapOnTwitterDiv('<p>Failed Fetching Twitter</p>'),
             ];
         }
 
         return [
-            'content' => trim($result['html']),
+            'content' => $this->wrapOnTwitterDiv(trim($result['html'])),
         ];
     }
 }

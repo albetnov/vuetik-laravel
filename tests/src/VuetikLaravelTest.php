@@ -158,7 +158,7 @@ it('Failed rendered twitter embed due to invalid id', function () {
         ]
     ]);
 
-    expect($content->html)->toEqual('<p>Failed Fetching Twitter</p>');
+    expect($content->html)->toEqual('<div data-twitter-url="https://twitter.com/livepixelart/status/iajfioewjfioawe?s=20" data-twitter-id="1678516215709585408"><p>Failed Fetching Twitter</p></div>');
 });
 
 it('Failed rendered twitter embed due to invalid id (with exception)', function () {
@@ -261,4 +261,19 @@ it("ignore the not found with appended class prefix", function () {
         ]
     ]);
     expect($content->html)->toContain('vuetik__failed__img');
+});
+
+it("wrapped twitter in it's div container", function () {
+    $twitter = file_get_contents(__DIR__."/examples/twitter.json");
+
+    $content = VuetikLaravel::parseJson($twitter);
+
+    expect($content->html)->toContain('div', 'data-twitter-id=', 'data-twitter-url');
+});
+
+it("getTwitterAttrs return passed parameter arrays", function () {
+    $exception = new TwitterParseException(['id' => 1, 'url' => 'test']);
+    expect($exception->getTwitterAttrs())->toBeArray()->toHaveKeys(['id', 'url'])
+    ->and($exception->getTwitterAttrs()['id'])->toEqual(1)
+    ->and($exception->getTwitterAttrs()['url'])->toEqual('test');
 });
