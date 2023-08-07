@@ -11,4 +11,13 @@ class ContentFactory
     public function __construct(readonly string $html, readonly array $images)
     {
     }
+
+    /**
+     * return an array containing id of images
+     * @return Array<string>
+     */
+    public function getImagesArray(): array
+    {
+        return collect($this->images)->map(fn(ImageFactory $imageFactory) => $imageFactory->id)->toArray();
+    }
 }
