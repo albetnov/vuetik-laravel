@@ -128,7 +128,7 @@ class VuetikLaravel
                         } else {
                             $uploadedImage->props = [
                                 'width' => $attrs->width,
-                                'height' => $attrs->height
+                                'height' => $attrs->height,
                             ];
 
                             $attrs->src = Utils::getImageUrl($uploadedImage);

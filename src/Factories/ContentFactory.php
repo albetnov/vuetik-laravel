@@ -14,10 +14,11 @@ class ContentFactory
 
     /**
      * return an array containing id of images
-     * @return Array<string>
+     *
+     * @return array<string>
      */
     public function getImagesArray(): array
     {
-        return collect($this->images)->map(fn(ImageFactory $imageFactory) => $imageFactory->id)->toArray();
+        return collect($this->images)->map(fn (ImageFactory $imageFactory) => $imageFactory->id)->toArray();
     }
 }

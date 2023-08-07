@@ -278,9 +278,9 @@ it('getTwitterAttrs return passed parameter arrays', function () {
 });
 
 it('get all parsed image ids using getImagesArray', function () {
-    $image = file_get_contents(__DIR__."/examples/image.json");
+    $image = file_get_contents(__DIR__.'/examples/image.json');
     Helpers::fakeVuetikImage();
 
     $content = VuetikLaravel::parseJson($image);
-    expect($content->getImagesArray())->toBeArray()->toContain("e4b9da63-cf1e-45d2-b967-2c8e44591c9e");
+    expect($content->getImagesArray())->toBeArray()->toContain('e4b9da63-cf1e-45d2-b967-2c8e44591c9e');
 });

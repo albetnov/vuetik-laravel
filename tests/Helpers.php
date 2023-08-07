@@ -11,7 +11,7 @@ class Helpers
         VuetikImages::insert([
             'id' => 'e4b9da63-cf1e-45d2-b967-2c8e44591c9e',
             'file_name' => 'default.jpg',
-            'props' => $noProps ? null :  json_encode([
+            'props' => $noProps ? null : json_encode([
                 'width' => 564,
                 'height' => 564,
             ]),

@@ -30,7 +30,7 @@ it('successfully save image', function () {
     Storage::disk('images')->assertExists(Utils::parseStoragePath().$uploadedImage->file_name);
 });
 
-it("image should stay pending when autoSave is off", function () {
+it('image should stay pending when autoSave is off', function () {
     $image = Helpers::getBase64ImgSrc();
 
     Storage::fake('images');

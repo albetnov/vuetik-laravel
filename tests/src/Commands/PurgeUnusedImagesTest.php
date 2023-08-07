@@ -2,11 +2,9 @@
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 use function Pest\Laravel\artisan;
 use Vuetik\VuetikLaravel\Models\VuetikImages;
-use function Pest\Laravel\withoutMockingConsoleOutput;
 
 uses(RefreshDatabase::class);
 
@@ -27,11 +25,10 @@ beforeEach(function () {
 });
 
 it('deleted all seeded images (due to expiry being -2 days and all of data is -5 days)', function () {
-   artisan('purge:unused-images')
+    artisan('purge:unused-images')
         ->expectsOutput('Unused ImageFactory Purged!')
         ->doesntExpectOutputToContain('Failed deleting file')
         ->assertExitCode(0);
-
 
     expect(VuetikImages::first())->toBeNull();
 });
