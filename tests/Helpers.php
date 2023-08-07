@@ -6,12 +6,12 @@ use Vuetik\VuetikLaravel\Models\VuetikImages;
 
 class Helpers
 {
-    public static function fakeVuetikImage()
+    public static function fakeVuetikImage(bool $noProps = false)
     {
         VuetikImages::insert([
             'id' => 'e4b9da63-cf1e-45d2-b967-2c8e44591c9e',
             'file_name' => 'default.jpg',
-            'props' => json_encode([
+            'props' => $noProps ? null :  json_encode([
                 'width' => 564,
                 'height' => 564,
             ]),

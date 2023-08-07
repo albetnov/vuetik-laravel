@@ -227,7 +227,7 @@ it('persist important image elements (width, height, id)', function () {
 
 it('rendered the glide url', function () {
     $image = file_get_contents(__DIR__.'/examples/image.json');
-    Helpers::fakeVuetikImage();
+    Helpers::fakeVuetikImage(noProps: true);
 
     $content = VuetikLaravel::parseJson($image);
 

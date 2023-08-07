@@ -126,11 +126,18 @@ class VuetikLaravel
                             }
                             $attrs->class .= ' vuetik__failed__img';
                         } else {
+                            $uploadedImage->props = [
+                                'width' => $attrs->width,
+                                'height' => $attrs->height
+                            ];
+
                             $attrs->src = Utils::getImageUrl($uploadedImage);
+
                             if (Arr::get($options, 'image.autoSave', true)) {
                                 $uploadedImage->status = VuetikImages::ACTIVE;
-                                $uploadedImage->save();
                             }
+
+                            $uploadedImage->save();
                         }
                     }
                 }
