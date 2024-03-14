@@ -21,7 +21,7 @@ it('store preupload from give array of id', function () {
 });
 
 it('store all binaries photos', function () {
-    $payload = file_get_contents(__DIR__ . '/examples/image_base64.json');
+    $payload = file_get_contents(__DIR__.'/examples/image_base64.json');
     Storage::fake('images');
 
     $content = VuetikLaravel::parseJson($payload, [
@@ -37,11 +37,11 @@ it('store all binaries photos', function () {
         ->and($db->status)->toBe(VuetikImages::ACTIVE)
         ->and($db->id)->toBe($content->images[0]->id);
 
-    Storage::disk('images')->assertExists(Utils::parseStoragePath() . $db->file_name);
+    Storage::disk('images')->assertExists(Utils::parseStoragePath().$db->file_name);
 });
 
 it('store all binaries photos from config disk', function () {
-    $payload = file_get_contents(__DIR__ . '/examples/image_base64.json');
+    $payload = file_get_contents(__DIR__.'/examples/image_base64.json');
 
     Storage::fake('images');
 
@@ -54,11 +54,11 @@ it('store all binaries photos from config disk', function () {
 
     $fileName = VuetikImages::find($content->images[0]->id)->file_name;
 
-    Storage::disk('images')->assertExists(Utils::parseStoragePath() . $fileName);
+    Storage::disk('images')->assertExists(Utils::parseStoragePath().$fileName);
 });
 
 it('store all pre-upload photo', function () {
-    $payload = file_get_contents(__DIR__ . '/examples/image.json');
+    $payload = file_get_contents(__DIR__.'/examples/image.json');
 
     VuetikImages::insert([
         'id' => 'e4b9da63-cf1e-45d2-b967-2c8e44591c9e',

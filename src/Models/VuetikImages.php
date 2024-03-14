@@ -16,7 +16,7 @@ use Illuminate\Support\Carbon;
  */
 class VuetikImages extends Model
 {
-    use HasUlids, HasFactory;
+    use HasFactory, HasUlids;
 
     public $table;
 

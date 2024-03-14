@@ -62,7 +62,7 @@ class ImageManager
      * Return the url of a Glide Instance which has the image with modifiers applied.
      * Currently only supports: width, height.
      */
-    public static function getGlideUrl(VuetikImages $image, string $vendorUrl = null, ?array $additionalProps = []): string
+    public static function getGlideUrl(VuetikImages $image, ?string $vendorUrl = null, ?array $additionalProps = []): string
     {
         $urlBuilder = UrlBuilderFactory::create($vendorUrl ?? config('vuetik-laravel.image_vendor_route'),
             config('vuetik-laravel.glide.sign_key'));

@@ -23,7 +23,7 @@ class TestCase extends Orchestra
         parent::setUp();
 
         Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'Vuetik\\VuetikLaravel\\Database\\Factories\\' . class_basename($modelName) . 'Factory'
+            fn (string $modelName) => 'Vuetik\\VuetikLaravel\\Database\\Factories\\'.class_basename($modelName).'Factory'
         );
     }
 
@@ -48,7 +48,7 @@ class TestCase extends Orchestra
 
     protected function defineDatabaseMigrations()
     {
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         // $migration = include __DIR__ . '/../database/migrations/create_vuetik_images_table.php';
         //
         // $migration->up();

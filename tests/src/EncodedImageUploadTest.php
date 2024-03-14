@@ -24,7 +24,7 @@ it('successfully save image', function () {
         ->and($uploadedImage->status)->toEqual(VuetikImages::ACTIVE)
         ->and($uploadedImage->file_name)->toContain('png');
 
-    Storage::disk('images')->assertExists(Utils::parseStoragePath() . $uploadedImage->file_name);
+    Storage::disk('images')->assertExists(Utils::parseStoragePath().$uploadedImage->file_name);
 });
 
 it('image should stay pending when autoSave is off', function () {
@@ -83,7 +83,7 @@ it('encoded to jpg', function () {
     );
 
     expect($uploadedImage->file_name)->toContain('jpg');
-    Storage::disk('images')->assertExists(Utils::parseStoragePath() . $uploadedImage->file_name);
+    Storage::disk('images')->assertExists(Utils::parseStoragePath().$uploadedImage->file_name);
 });
 
 it('failed encode image (validation fails)', function () {
