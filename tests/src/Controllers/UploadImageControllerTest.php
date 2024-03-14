@@ -1,14 +1,11 @@
 <?php
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Testing\Fluent\AssertableJson;
 use League\Glide\Signatures\SignatureFactory;
 use Symfony\Component\HttpFoundation\Response;
 use Vuetik\VuetikLaravel\Models\VuetikImages;
-
-uses(RefreshDatabase::class);
 
 beforeEach(function () {
     // Make a fake routing
@@ -64,7 +61,7 @@ it('uploaded image successfully (without glide)', function () {
     expect($image)->not->toBeNull()
         ->and($image->id)->toEqual($result['image']['id']);
 
-    Storage::disk('fake')->assertExists('images/'.$file->hashName());
+    Storage::disk('fake')->assertExists('images/' . $file->hashName());
 });
 
 it('uploaded image successfully (with glide)', function () {

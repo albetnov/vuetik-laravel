@@ -1,14 +1,11 @@
 <?php
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Exception\NotReadableException;
 use Vuetik\VuetikLaravel\EncodedImageUpload;
 use Vuetik\VuetikLaravel\Models\VuetikImages;
 use Vuetik\VuetikLaravel\Tests\Helpers;
 use Vuetik\VuetikLaravel\Utils;
-
-uses(RefreshDatabase::class);
 
 it('successfully save image', function () {
     $image = Helpers::getBase64ImgSrc();
@@ -27,7 +24,7 @@ it('successfully save image', function () {
         ->and($uploadedImage->status)->toEqual(VuetikImages::ACTIVE)
         ->and($uploadedImage->file_name)->toContain('png');
 
-    Storage::disk('images')->assertExists(Utils::parseStoragePath().$uploadedImage->file_name);
+    Storage::disk('images')->assertExists(Utils::parseStoragePath() . $uploadedImage->file_name);
 });
 
 it('image should stay pending when autoSave is off', function () {
@@ -86,7 +83,7 @@ it('encoded to jpg', function () {
     );
 
     expect($uploadedImage->file_name)->toContain('jpg');
-    Storage::disk('images')->assertExists(Utils::parseStoragePath().$uploadedImage->file_name);
+    Storage::disk('images')->assertExists(Utils::parseStoragePath() . $uploadedImage->file_name);
 });
 
 it('failed encode image (validation fails)', function () {

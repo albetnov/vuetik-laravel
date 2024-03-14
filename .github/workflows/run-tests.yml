@@ -57,8 +57,8 @@ jobs:
       - name: Install dependencies
         run: |
           npm i
-          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" "nesbot/carbon:${{ matrix.carbon }}" "illuminate/contracts:${{ matrix.contracts }}" --no-interaction --no-update
-          composer require "nunomaduro/collision:${{ matrix.collision }}" --dev --no-interaction --no-update
+          composer require "laravel/framework:${{ matrix.laravel }}" "nesbot/carbon:${{ matrix.carbon }}" "illuminate/contracts:${{ matrix.contracts }}" --no-interaction --no-update
+          composer require "nunomaduro/collision:${{ matrix.collision }}" "orchestra/testbench:${{ matrix.testbench}}" --dev --no-interaction --no-update
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
       - name: List Installed Dependencies
