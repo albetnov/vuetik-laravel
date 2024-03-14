@@ -11,7 +11,7 @@ class TwitterParseException extends \Exception
     public function __construct(
         array $twitter,
         int $code = 0,
-        \Throwable $previous = null
+        ?\Throwable $previous = null
     ) {
         $this->id = $twitter['id'];
         $this->url = $twitter['url'];

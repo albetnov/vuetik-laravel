@@ -2,8 +2,9 @@
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use function Pest\Laravel\artisan;
 use Vuetik\VuetikLaravel\Models\VuetikImages;
+
+use function Pest\Laravel\artisan;
 
 beforeEach(function () {
     config()->set('vuetik-laravel.storage.disk', 'images');
@@ -14,7 +15,7 @@ beforeEach(function () {
     foreach ($images as $image) {
         $image->created_at = now()->subDays(5);
         Storage::disk('images')->put(
-            'imgs/' . $image->file_name,
+            'imgs/'.$image->file_name,
             UploadedFile::fake()->image($image->file_name)->getContent()
         );
         $image->save();
