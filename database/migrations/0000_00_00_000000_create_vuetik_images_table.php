@@ -19,6 +19,6 @@ return new class extends Migration
 
     public function down()
     {
-        Schema::dropIfExist('vuetik_images');
+        Schema::dropIfExists('vuetik_images');
     }
 };
